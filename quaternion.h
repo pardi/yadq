@@ -12,8 +12,16 @@ enum class InterpType {SLERP, LERP};
 template<typename T, typename = std::enable_if_t<std::is_same<T, float>::value || std::is_same<T, double>::value>>
 class quaternion;
 
-template<typename T, bool _activate_flag = true>
-inline constexpr T normalise(T q);
+template<bool _activate_flag = true>
+inline auto normalise(auto q){
+
+    if constexpr (_activate_flag){
+        return q.normalise();
+    }
+    else {
+        return q;
+    }
+}
 
 template<typename T>
 constexpr inline T sgn(const quaternion<T>& q_in){
@@ -114,16 +122,7 @@ constexpr inline quaternion<T> operator/(quaternion<T> q_lhv, double rhv) {
     return normalise<false>(q_lhv);
 }
 
-template<typename T, bool _activate_flag = true>
-inline constexpr quaternion<T> normalise(quaternion<T> q){
 
-    if constexpr (_activate_flag){
-        return q.normalise();
-    }
-    else {
-        return q;
-    }
-}
 
 template<typename T, typename U>
 inline constexpr quaternion<T> conjugate(U&& q) {
@@ -132,29 +131,13 @@ inline constexpr quaternion<T> conjugate(U&& q) {
     return q_res.conjugate();
 }
 
-// template<typename T>
-// inline constexpr quaternion<T> inverse(const quaternion<T>) {
-//     // Check if a non-zero quaternion
-//     // qT q_conj(std::move(conjugate(*this)));
-//     // qT q_tmp(q_conj * (*this));
-
-//     // auto val = (q_tmp.w() + q_tmp.x() + q_tmp.y() + q_tmp.z());
-
-//     // q_conj.w_ /= val;
-//     // q_conj.x_ /= val;
-//     // q_conj.y_ /= val;
-//     // q_conj.z_ /= val;
-//     qT q_conj;
-
-//     return q_conj;
-// }
 
 template<typename T>
 inline constexpr quaternion<T> inverse(quaternion<T> q_in) {
     // Check if a non-zero quaternion
     quaternion<T> q_conj = q_in.conjugate();
 
-    return q_conj / (q_in.norm());
+    return q_conj / pow(q_in.norm(), 2);
 }
 
 
@@ -218,7 +201,7 @@ class quaternion<T, typename std::enable_if_t<std::is_same<T, float>::value || s
             return z_;
         }
 
-        inline constexpr qT& normalise() {
+        inline constexpr qT normalise() {
 
             
             if(auto d = norm(); d != 0.0) {
