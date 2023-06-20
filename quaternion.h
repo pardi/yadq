@@ -9,18 +9,31 @@
 
 enum class InterpType {SLERP, LERP};
 
-template<typename T>
+template<typename T, typename = std::enable_if_t<std::is_same<T, float>::value || std::is_same<T, double>::value>>
 class quaternion;
+
+template<typename T, bool _activate_flag = true>
+inline constexpr T normalise(T q);
+
+template<typename T>
+constexpr inline T sgn(const quaternion<T>& q_in){
+
+    if (q_in.empty()){
+        return quaternion<T>(0, 0, 0, 0);
+    } else {
+        return (q_in / mod(q_in));
+    }            
+}
 
 template<typename T>
 std::ostream& operator<<(std::ostream &os, const quaternion<T>& q_in) { 
     return os << "w: " << q_in.w() << " x: " << q_in.x() << " y: " << q_in.y() << " z: " << q_in.z();
 }
 
-template<typename T, typename U>
-quaternion<T> operator*(double val, U&& q) { 
+template<typename T>
+auto operator*(double val, quaternion<T>&& q){ 
 
-    quaternion<T> q_res(std::forward<U>(q));
+    auto q_res(std::forward<T>(q));
 
     q_res.w_ *= val; 
     q_res.x_ *= val; 
@@ -30,13 +43,13 @@ quaternion<T> operator*(double val, U&& q) {
     return normalise(q_res);
 }
 
-template<typename T, typename U>
-quaternion<T> operator*(U&& q_in, double val) { 
+template<typename T>
+auto operator*(quaternion<T>&& q_in, double val) { 
     return val * std::forward(q_in);
 }
 
 template<typename T>
-constexpr inline quaternion<T> operator*(const quaternion<T>& q_lhv, const quaternion<T>& q_rhv) {
+constexpr inline auto operator*(const quaternion<T>& q_lhv, const quaternion<T>& q_rhv) {
     return hamilton_prod(q_lhv, q_rhv);
 }
 
@@ -53,8 +66,8 @@ quaternion<T> mod(U&& q){
     return q_res;
 }
 
-template<typename T, typename U>
-quaternion<T> operator+(quaternion<T> q_lhv, U&& q_rhv){
+template<typename T>
+auto operator+(quaternion<T> q_lhv, const quaternion<T>& q_rhv){
 
     q_lhv.w_ += q_rhv.w();
     q_lhv.x_ += q_rhv.x();
@@ -65,9 +78,9 @@ quaternion<T> operator+(quaternion<T> q_lhv, U&& q_rhv){
 }
 
 template<typename T, typename U>
-quaternion<T> operator-(U&& q_lhv, U&& q_rhv){
+constexpr inline auto operator-(quaternion<T>&& q_lhv, quaternion<T>&& q_rhv){
 
-    quaternion<T> q_res(std::forward<U>(q_lhv));
+    auto q_res(std::forward<U>(q_lhv));
 
     q_res.w_ -= q_rhv.w();
     q_res.x_ -= q_rhv.x();
@@ -78,7 +91,8 @@ quaternion<T> operator-(U&& q_lhv, U&& q_rhv){
 }
 
 template<typename T>
-constexpr inline quaternion<T> hamilton_prod(const quaternion<T>& q_lhv, const quaternion<T>& q_rhv) {
+constexpr inline auto hamilton_prod(const quaternion<T>& q_lhv, const quaternion<T>& q_rhv) {
+    
     quaternion<T> q_res;
 
     q_res.w_ = q_lhv.w() * q_rhv.w() - q_lhv.x() * q_rhv.x() - q_lhv.y() * q_rhv.y() - q_lhv.z() * q_rhv.z();
@@ -90,48 +104,69 @@ constexpr inline quaternion<T> hamilton_prod(const quaternion<T>& q_lhv, const q
 }
 
 template<typename T>
- quaternion<decltype(std::declval<T>())> operator/(T&& q_lhv, double rhv) {
+constexpr inline quaternion<T> operator/(quaternion<T> q_lhv, double rhv) {
 
-    quaternion<decltype(std::declval<T>())> q_res(std::forward<T>(q_lhv));
+    q_lhv.w_ /= rhv; 
+    q_lhv.x_ /= rhv; 
+    q_lhv.y_ /= rhv; 
+    q_lhv.z_ /= rhv; 
 
-    q_res.w_ /= rhv; 
-    q_res.x_ /= rhv; 
-    q_res.y_ /= rhv; 
-    q_res.z_ /= rhv; 
-
-    return normalise(q_res);
+    return normalise<false>(q_lhv);
 }
 
-template<typename T>
-constexpr inline quaternion<T> normalise(quaternion<T> q){
+template<typename T, bool _activate_flag = true>
+inline constexpr quaternion<T> normalise(quaternion<T> q){
 
-    auto d = q.norm();
-
-    if (d != 1.0) {
-        return q / d;
+    if constexpr (_activate_flag){
+        return q.normalise();
     }
-
-    return q;
+    else {
+        return q;
+    }
 }
 
 template<typename T, typename U>
 inline constexpr quaternion<T> conjugate(U&& q) {
     quaternion<T> q_res(std::forward(q));
-    
-    q_res.conjugate();
 
-    return q_res;
+    return q_res.conjugate();
+}
+
+// template<typename T>
+// inline constexpr quaternion<T> inverse(const quaternion<T>) {
+//     // Check if a non-zero quaternion
+//     // qT q_conj(std::move(conjugate(*this)));
+//     // qT q_tmp(q_conj * (*this));
+
+//     // auto val = (q_tmp.w() + q_tmp.x() + q_tmp.y() + q_tmp.z());
+
+//     // q_conj.w_ /= val;
+//     // q_conj.x_ /= val;
+//     // q_conj.y_ /= val;
+//     // q_conj.z_ /= val;
+//     qT q_conj;
+
+//     return q_conj;
+// }
+
+template<typename T>
+inline constexpr quaternion<T> inverse(quaternion<T> q_in) {
+    // Check if a non-zero quaternion
+    quaternion<T> q_conj = q_in.conjugate();
+
+    return q_conj / (q_in.norm());
 }
 
 
 template<typename T>
-class quaternion{
+class quaternion<T, typename std::enable_if_t<std::is_same<T, float>::value || std::is_same<T, double>::value>>{
 
     private:
-    using qT = quaternion<T>;    
-
+        using qT = quaternion<T>;    
+    
     public:
-
+        using value_type = T;
+    
         quaternion(): w_(1), x_(0), y_(0), z_(0) {}
         quaternion(T w, T x, T y, T z): w_(w), x_(x), y_(y), z_(z) {
             normalise();
@@ -141,6 +176,7 @@ class quaternion{
         quaternion(qT&& q_in) = default;
         constexpr qT& operator=(const qT& q_in) = default;
         constexpr qT& operator=(qT&& q_in) = default;
+
         constexpr qT& operator+=(const qT& q_in) {
             w_ += q_in.w_;
             x_ += q_in.x_;
@@ -150,84 +186,19 @@ class quaternion{
             normalise();
             return *this;
         }
+        
         constexpr qT& operator*=(const qT& q_in){
 
             *this = (*this) * q_in;            
 
             return (*this);
         }
-
-        qT interpolation(const qT& q_start, const qT& q_end, double t, InterpType interp_type = InterpType::LERP){
-            switch (interp_type)
-            {
-            case InterpType::LERP:
-                return q_start * (1.0 - t) + q_end * t;
-                break;
-            default:
-                return q_start;
-            }
-
-        }
-
-        qT exp(const qT& q, double t){
-            
-            qT q_conj = q.conjugate();
-
-            qT u = (q - q_conj ) / 2;
-            
-            return q_conj;
-            
-        }
-
+        
         constexpr bool empty() const{
             return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
         }
-
-        constexpr T sgn(const qT& q) const{
-
-            if (q.empty()){
-                return 0;
-            } else {
-                return q / q.mod();
-            }            
-        }
-
-        inline constexpr void normalise() {
-
-            auto d = norm();
-
-            if (d != 1.0) {
-                w_ /= d;
-                x_ /= d;
-                y_ /= d;
-                z_ /= d;
-            }
-        }
-
-        inline constexpr qT& conjugate() {
-            x_ *= -1;
-            y_ *= -1;
-            z_ *= -1;
-            return (*this);
-        }
-
-        inline constexpr qT inverse() {
-            // Check if a non-zero quaternion
-            // qT q_conj(std::move(conjugate(*this)));
-            // qT q_tmp(q_conj * (*this));
-
-            // auto val = (q_tmp.w() + q_tmp.x() + q_tmp.y() + q_tmp.z());
-
-            // q_conj.w_ /= val;
-            // q_conj.x_ /= val;
-            // q_conj.y_ /= val;
-            // q_conj.z_ /= val;
-            qT q_conj;
-
-            return q_conj;
-        }
-
-        inline T norm() const noexcept{
+        
+        constexpr inline T norm() const noexcept{
             return std::sqrt(std::pow(w_, 2) + std::pow(x_, 2) + std::pow(y_, 2) + std::pow(z_, 2));
         }
 
@@ -246,6 +217,56 @@ class quaternion{
         inline T z() const noexcept{
             return z_;
         }
+
+        inline constexpr qT& normalise() {
+
+            
+            if(auto d = norm(); d != 0.0) {
+                w_ /= d;
+                x_ /= d;
+                y_ /= d;
+                z_ /= d;
+            }
+
+            return *this;
+        }
+
+        inline constexpr qT conjugate() {
+
+            qT q_res(*this);
+
+            q_res.x_ *= -1;
+            q_res.y_ *= -1;
+            q_res.z_ *= -1;
+
+            return q_res;
+        }
+
+
+        // qT interpolation(const qT& q_start, const qT& q_end, double t, InterpType interp_type = InterpType::LERP){
+        //     switch (interp_type)
+        //     {
+        //     case InterpType::LERP:
+        //         return q_start * (1.0 - t) + q_end * t;
+        //         break;
+        //     default:
+        //         return q_start;
+        //     }
+
+        // }
+
+        // qT exp(const qT& q, double t){
+            
+        //     qT q_conj = q.conjugate();
+
+        //     qT u = (q - q_conj ) / 2;
+            
+        //     return q_conj;
+            
+        // }
+
+
+        T value;
 
         T w_;
         T x_;

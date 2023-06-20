@@ -30,7 +30,7 @@ int main(){
     quaternion<double> q(w, 1, 2, 3);
     quaternion<double> q1 = q;
 
-    int N = 100000;
+    int N = 1;
     auto start = std::chrono::steady_clock::now();    
     for (int i = 0; i < N; ++i){
         quaternion<double> q2(q);
@@ -69,10 +69,11 @@ int main(){
     start = std::chrono::steady_clock::now();    
     quaternion<double> q_tmp(1, 0, 0, 0);
     for (int i = 0; i < N; ++i){
+        std::cout << i << " " << std::endl;
         q = q + q_tmp;
 
         if (i == N - 1){
-            std::cout << "#4 res: " <<  q.w_ << std::endl;
+            std::cout << "#4 res: " <<  q.w() << std::endl;
         }
     }
     end = std::chrono::steady_clock::now();
@@ -201,32 +202,38 @@ int main(){
         
     }
 
-    std::cout << "------------------------Inverse--------------------\n\n";
+    // std::cout << "------------------------Inverse--------------------\n\n";
 
-    {
-        quaternion<double> q_tmp(2, -1, 3, 1);
+    // {
+    //     quaternion<double> q_tmp(2, -1, 3, 1);
         
-        start = std::chrono::steady_clock::now();    
-        for (int i = 0; i < N; ++i){
-            q_tmp.inverse();
-        }
+    //     start = std::chrono::steady_clock::now();    
+    //     for (int i = 0; i < N; ++i){
+    //         q_tmp.inverse();
+    //     }
 
-        end = std::chrono::steady_clock::now();
-        elapsed_seconds = end - start;
-        std::cout << "#1 inverse [ticks]: " << elapsed_seconds.count() / N * 1e10 << "\n\n";
-        std::cout << "res: " << q_tmp.inverse() << "\n\n";
+    //     end = std::chrono::steady_clock::now();
+    //     elapsed_seconds = end - start;
+    //     std::cout << "#1 inverse [ticks]: " << elapsed_seconds.count() / N * 1e10 << "\n\n";
+    //     std::cout << "res: " << q_tmp.inverse() << "\n\n";
         
-    }
+    // }
 
-    std::cout << "------------------------ref&--------------------\n\n";
+    std::cout << "------------------------conj--------------------\n\n";
     
     {
         quaternion<double> q_tmp(2, -1, 3, 1);
-        quaternion<double> q_tmp1(2, -1, 3, 1);
+        quaternion<double> q_tmp1(1, 0, 0, 0);
         
         start = std::chrono::steady_clock::now();    
 
-        q_tmp += q_tmp;
+        std::cout << q_tmp << std::endl;
+        std::cout << q_tmp.conjugate() << std::endl;
+        std::cout << q_tmp.conjugate() << std::endl;
+        std::cout << q_tmp.conjugate() * q_tmp1 << std::endl;
+        std::cout << q_tmp << std::endl;
+
+        // std::cout << inverse(q_tmp) << std::endl;
         
     }
 
