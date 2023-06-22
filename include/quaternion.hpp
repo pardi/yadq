@@ -5,33 +5,32 @@
 #include <type_traits>
 #include <iostream>
 #include <cmath>
-#include <numeric>
 
 enum class InterpType {SLERP, LERP};
-
-template<typename T>
+template<typename T, bool _unitquat = false>
 class quaternion{
-
+    static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "This class only supports floating point types");
     private:
-        using qT = quaternion<T>;    
+        using qT = quaternion<T, _unitquat>;    
 
         T w_;
         T x_;
         T y_;
-        T z_;          
+        T z_;  
     
     public:
         using value_type = T;
     
         quaternion(): w_(1), x_(0), y_(0), z_(0) {}
         quaternion(T w, T x, T y, T z): w_(w), x_(x), y_(y), z_(z) {
-            normalise();
+
+            if constexpr (_unitquat){
+                normalise();
+            }
         }
         
         quaternion(const qT& q_in) = default;
-        quaternion(qT&& q_in) = default;
         constexpr qT& operator=(const qT& q_in) = default;
-        constexpr qT& operator=(qT&& q_in) = default;
         
         constexpr bool empty() const{
             return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
@@ -81,4 +80,10 @@ class quaternion{
         }
 
 };
+
+using quaternionf = quaternion<float>;
+using quaterniond = quaternion<double>;
+using quaternionUf = quaternion<float, true>;
+using quaternionUd = quaternion<double, true>;
+
 #endif
