@@ -6,84 +6,148 @@
 #include <iostream>
 #include <cmath>
 
-enum class InterpType {SLERP, LERP};
-template<typename T, bool _unitquat = false>
-class quaternion{
-    static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "This class only supports floating point types");
-    private:
-        using qT = quaternion<T, _unitquat>;    
+namespace yadq{
 
-        T w_;
-        T x_;
-        T y_;
-        T z_;  
-    
-    public:
-        using value_type = T;
-    
-        quaternion(): w_(1), x_(0), y_(0), z_(0) {}
-        quaternion(T w, T x, T y, T z): w_(w), x_(x), y_(y), z_(z) {
+    enum class InterpType {SLERP, LERP};
 
-            if constexpr (_unitquat){
-                normalise();
+    template<typename T, bool _unitquat = false>
+    class quaternion{
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "This class only supports floating point types");
+        private:
+            using qT = quaternion<T, _unitquat>;    
+
+            T w_;
+            T x_;
+            T y_;
+            T z_;  
+        
+        public:
+            using value_type = T;
+        
+            quaternion(): w_(1), x_(0), y_(0), z_(0) {}
+            quaternion(T w, T x, T y, T z): w_(w), x_(x), y_(y), z_(z) {
+
+                if constexpr (_unitquat){
+                    normalise();
+                }
             }
-        }
-        
-        quaternion(const qT& q_in) = default;
-        constexpr qT& operator=(const qT& q_in) = default;
-        
-        constexpr bool empty() const{
-            return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
-        }
-        
-        constexpr inline T norm() const noexcept{
-            return std::sqrt(std::pow(w_, 2) + std::pow(x_, 2) + std::pow(y_, 2) + std::pow(z_, 2));
-        }
-
-        inline T w() const noexcept{
-            return w_;
-        }
-
-        inline T x() const noexcept{
-            return x_;
-        }
-
-        inline T y() const noexcept{
-            return y_;
-        }
-
-        inline T z() const noexcept{
-            return z_;
-        }
-
-        inline constexpr qT normalise() {
-
-            if(auto d = norm(); d != 0.0) {
-                w_ /= d;
-                x_ /= d;
-                y_ /= d;
-                z_ /= d;
+            
+            quaternion(const qT& q_in) = default;
+            constexpr qT& operator=(const qT& q_in) = default;
+            
+            constexpr bool empty() const{
+                return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
+            }
+            
+            constexpr inline T norm() const noexcept{
+                return std::sqrt(std::pow(w_, 2) + std::pow(x_, 2) + std::pow(y_, 2) + std::pow(z_, 2));
             }
 
-            return *this;
+            inline T w() const noexcept{
+                return w_;
+            }
+
+            inline T x() const noexcept{
+                return x_;
+            }
+
+            inline T y() const noexcept{
+                return y_;
+            }
+
+            inline T z() const noexcept{
+                return z_;
+            }
+
+            protected:
+
+            inline constexpr void normalise() {
+
+                if(auto d = norm(); d != 0.0) {
+                    w_ /= d;
+                    x_ /= d;
+                    y_ /= d;
+                    z_ /= d;
+                }
+            }
+
+            inline constexpr void conjugate() {
+
+                x_ *= -1;
+                y_ *= -1;
+                z_ *= -1;
+
+            }
+
+    };
+
+    template<bool _activate_flag = true>
+    inline auto normalise(auto q){
+
+        if constexpr (_activate_flag){
+            if(auto d = q.norm(); d != 0.0) {
+                q.w_ /= d;
+                q.x_ /= d;
+                q.y_ /= d;
+                q.z_ /= d;
+            }
         }
 
-        inline constexpr qT conjugate() {
+        return q;
+    }
 
-            qT q_res(*this);
+    template<typename T>
+    constexpr inline T sgn(const quaternion<T>& q_in){
 
-            q_res.x_ *= -1;
-            q_res.y_ *= -1;
-            q_res.z_ *= -1;
+        if (q_in.empty()){
+            return quaternion<T>(0, 0, 0, 0);
+        } else {
+            return (q_in / mod(q_in));
+        }            
+    }
 
-            return q_res;
-        }
+    template<typename T>
+    std::ostream& operator<<(std::ostream &os, const quaternion<T>& q_in) { 
+        return os << "w: " << q_in.w() << " x: " << q_in.x() << " y: " << q_in.y() << " z: " << q_in.z();
+    }
 
-};
+    template<typename T>
+    quaternion<T> mod(quaternion<T> q){
+        
+        q.w_ /= fabs(q.w());
+        q.x_ /= fabs(q.x());
+        q.y_ /= fabs(q.y());
+        q.z_ /= fabs(q.z());
 
-using quaternionf = quaternion<float>;
-using quaterniond = quaternion<double>;
-using quaternionUf = quaternion<float, true>;
-using quaternionUd = quaternion<double, true>;
+        return q;
+    }
+
+
+    template<typename T>
+    constexpr inline auto hamilton_prod(const quaternion<T>& q_lhv, const quaternion<T>& q_rhv) {
+        
+        quaternion<T> q_res;
+
+        q_res.w_ = q_lhv.w() * q_rhv.w() - q_lhv.x() * q_rhv.x() - q_lhv.y() * q_rhv.y() - q_lhv.z() * q_rhv.z();
+        q_res.x_ = q_lhv.w() * q_rhv.x() + q_lhv.x() * q_rhv.w() + q_lhv.y() * q_rhv.z() - q_lhv.z() * q_rhv.y();
+        q_res.y_ = q_lhv.w() * q_rhv.y() - q_lhv.x() * q_rhv.z() + q_lhv.y() * q_rhv.w() + q_lhv.z() * q_rhv.x();
+        q_res.z_ = q_lhv.w() * q_rhv.z() + q_lhv.x() * q_rhv.y() - q_lhv.y() * q_rhv.x() + q_lhv.z() * q_rhv.w();
+
+        return q_res;
+    }
+
+    template<typename T>
+    constexpr inline auto hamilton_prod(const quaternion<T, true>& q_lhv, const quaternion<T>& q_rhv) {
+
+        return normalise(hamilton_prod(q_lhv, q_rhv));
+    }
+
+
+
+    using quaternionf = quaternion<float>;
+    using quaterniond = quaternion<double>;
+    using quaternionUf = quaternion<float, true>;
+    using quaternionUd = quaternion<double, true>;
+}
 
 #endif
