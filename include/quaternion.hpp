@@ -29,7 +29,15 @@ namespace yadq{
             
             quaternion(const qT& q_in) = default;
             constexpr qT& operator=(const qT& q_in) = default;
-            
+            constexpr qT& operator+=(const qT& q_in) {
+                w_ += q_in.w_;
+                x_ += q_in.x_;
+                y_ += q_in.y_;
+                z_ += q_in.z_;
+
+                return *this;
+            }
+
             constexpr bool empty() const{
                 return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
             }
@@ -83,7 +91,14 @@ namespace yadq{
             }
             
             quaternionU(const quaternionU<T>& q_in): quaternion<T>(q_in) {}
-            constexpr quaternionU& operator=(const quaternionU& q_in) = default;
+            constexpr quaternionU<T>& operator=(const quaternionU<T>& q_in) = default;
+
+            constexpr quaternionU<T>& operator+=(const quaternionU<T>& q_in){
+                *this = static_cast<quaternion<T>>(*this) + static_cast<quaternion<T>>(q_in);
+                
+                this->normalise();
+                return *this;
+            }
     };
 
 
@@ -178,6 +193,10 @@ namespace yadq{
         return q_res;
     }
 
+    /*
+        ------------------------------ Operators definition ------------------------------
+    */ 
+
     template<   template<typename> class Base, 
                 typename T, 
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
@@ -190,11 +209,32 @@ namespace yadq{
 
         return normalise<false>(q_lhv);
     }
-    
-    using quaternionf = quaternion<float>;
-    using quaterniond = quaternion<double>;
-    using quaternionUf = quaternionU<float>;
-    using quaternionUd = quaternionU<double>;
+
+
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr inline auto operator-(const Base<T>& q_lhv, const Base<T>& q_rhv){
+
+        Base<T> q_res = q_lhv;
+
+        q_res.w_ -= q_rhv.w();
+        q_res.x_ -= q_rhv.x();
+        q_res.y_ -= q_rhv.y();
+        q_res.z_ -= q_rhv.z();
+
+        if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
+            return normalise(q_res);
+        }else{
+            return q_res;
+        }
+    }
+
+
+using quaternionf = quaternion<float>;
+using quaterniond = quaternion<double>;
+using quaternionUf = quaternionU<float>;
+using quaternionUd = quaternionU<double>;
 
 }
 
