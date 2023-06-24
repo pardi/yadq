@@ -83,6 +83,7 @@ namespace yadq{
             }
             
             quaternionU(const quaternionU<T>& q_in): quaternion<T>(q_in) {}
+            constexpr quaternionU& operator=(const quaternionU& q_in) = default;
     };
 
 
@@ -151,6 +152,21 @@ namespace yadq{
         return q;
     }
 
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr inline auto inverse(const Base<T>& q_in) {
+
+        if(!q_in.empty()){
+            Base<T> q_conj = q_in;
+            q_conj.conjugate();
+
+            return q_conj / pow(q_in.norm(), 2);;
+        }
+        else{
+            return Base<T>(0, 0, 0, 0);
+        }
+    }
 
     template<   template<typename> class Base, 
                 typename T, 
@@ -165,7 +181,7 @@ namespace yadq{
     template<   template<typename> class Base, 
                 typename T, 
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline quaternion<T> operator/(const Base<T>& q_lhv, double rhv) {
+    constexpr inline auto operator/(const Base<T>& q_lhv, double rhv) {
 
         Base<T> q_res(  q_lhv.w() / rhv,
                         q_lhv.x() / rhv,
@@ -174,11 +190,12 @@ namespace yadq{
 
         return normalise<false>(q_lhv);
     }
-
+    
     using quaternionf = quaternion<float>;
     using quaterniond = quaternion<double>;
     using quaternionUf = quaternionU<float>;
     using quaternionUd = quaternionU<double>;
+
 }
 
 #endif
