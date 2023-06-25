@@ -282,6 +282,12 @@ namespace yadq{
         return val * q_lhv;
     }
 
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto operator*(const Base<T>& q_lhv, const Base<T>& q_rhv) {
+        return hamilton_prod(q_lhv, q_rhv);
+    }
 
 
     using quaternionf = quaternion<float>;
