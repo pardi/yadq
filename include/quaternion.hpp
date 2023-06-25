@@ -137,8 +137,10 @@ namespace yadq{
 
     }
 
-    template<typename T>
-    constexpr inline T sgn(const quaternion<T>& q_in){
+    template<   template <typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto sgn(const Base<T>& q_in){
 
         if (q_in.empty()){
             return quaternion<T>(0, 0, 0, 0);
@@ -152,15 +154,17 @@ namespace yadq{
         return os << "w: " << q_in.w() << " x: " << q_in.x() << " y: " << q_in.y() << " z: " << q_in.z();
     }
 
-    template<typename T>
-    quaternion<T> mod(quaternion<T> q){
+    template<   template <typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto mod(const Base<T>& q){
         
-        q.w_ /= fabs(q.w());
-        q.x_ /= fabs(q.x());
-        q.y_ /= fabs(q.y());
-        q.z_ /= fabs(q.z());
-
-        return q;
+        Base<T> q_res(  q.w() /= fabs(q.w()),
+                        q.x() /= fabs(q.x()),
+                        q.y() /= fabs(q.y()),
+                        q.z() /= fabs(q.z()));
+        
+        return q_res;
     }
 
     template<   template <typename> class Base, 
@@ -174,14 +178,6 @@ namespace yadq{
                         q_lhv.w() * q_rhv.z() + q_lhv.x() * q_rhv.y() - q_lhv.y() * q_rhv.x() + q_lhv.z() * q_rhv.w());
 
         return q_res;
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto conjugate(Base<T> q) {
-        q.conjugate();
-        return q;
     }
 
     template<   template<typename> class Base, 
