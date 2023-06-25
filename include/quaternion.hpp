@@ -10,22 +10,22 @@ namespace yadq{
 
     enum class InterpType {SLERP, LERP};
 
-    template<typename T>
+    template<typename _T>
     class quaternion{
-        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "This class only supports floating point types");
+        static_assert(std::is_same_v<_T, float> || std::is_same_v<_T, double>, "This class only supports floating point types");
         private:
-            using qT = quaternion<T>;    
+            using qT = quaternion<_T>;    
 
-            T w_;
-            T x_;
-            T y_;
-            T z_;  
+            _T w_;
+            _T x_;
+            _T y_;
+            _T z_;  
         
         public:
-            using value_type = T;
+            using value_type = _T;
         
             quaternion(): w_(1), x_(0), y_(0), z_(0) {}
-            quaternion(T w, T x, T y, T z): w_(w), x_(x), y_(y), z_(z) {}
+            quaternion(_T w, _T x, _T y, _T z): w_(w), x_(x), y_(y), z_(z) {}
             
             quaternion(const qT& q_in) = default;
             constexpr qT& operator=(const qT& q_in) = default;
@@ -37,28 +37,36 @@ namespace yadq{
 
                 return *this;
             }
+            constexpr qT& operator/=(const T rhv) {
+                w_ /= rhv;
+                x_ /= rhv;
+                y_ /= rhv;
+                z_ /= rhv;
+
+                return *this;
+            }
 
             constexpr bool empty() const{
                 return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
             }
             
-            constexpr inline T norm() const noexcept{
+            constexpr inline auto norm() const noexcept{
                 return std::sqrt(std::pow(w_, 2) + std::pow(x_, 2) + std::pow(y_, 2) + std::pow(z_, 2));
             }
 
-            inline T w() const noexcept{
+            inline auto w() const noexcept{
                 return w_;
             }
 
-            inline T x() const noexcept{
+            inline auto x() const noexcept{
                 return x_;
             }
 
-            inline T y() const noexcept{
+            inline auto y() const noexcept{
                 return y_;
             }
 
-            inline T z() const noexcept{
+            inline auto z() const noexcept{
                 return z_;
             }
 
@@ -106,18 +114,22 @@ namespace yadq{
                 template <typename> class Base, 
                 typename T, 
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    inline Base<T> normalise(Base<T> q){
+    inline Base<T> normalise(const Base<T>& q_in){
 
         if constexpr (_activate_flag){
-            if(auto d = q.norm(); d != 0.0) {
-                q.w_ /= d;
-                q.x_ /= d;
-                q.y_ /= d;
-                q.z_ /= d;
+            
+            if(auto d = q_in.norm(); d != 0.0) {
+
+                Base<T> q_res(  q_in.w() / d, 
+                                q_in.x() / d, 
+                                q_in.y() / d, 
+                                q_in.z() / d);
+                return q_res;
             }
         }
-
-        return q;
+        else {
+            return q_in;
+        }
     }
 
     template<typename T>
@@ -216,12 +228,10 @@ namespace yadq{
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
     constexpr inline auto operator-(const Base<T>& q_lhv, const Base<T>& q_rhv){
 
-        Base<T> q_res = q_lhv;
-
-        q_res.w_ -= q_rhv.w();
-        q_res.x_ -= q_rhv.x();
-        q_res.y_ -= q_rhv.y();
-        q_res.z_ -= q_rhv.z();
+        Base<T> q_res(  q_lhv.w() - q_rhv.w(),
+                        q_lhv.x() - q_rhv.x(),
+                        q_lhv.y() - q_rhv.y(),
+                        q_lhv.z() - q_rhv.z());
 
         if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
             return normalise(q_res);
@@ -230,11 +240,28 @@ namespace yadq{
         }
     }
 
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr inline auto operator+(const Base<T>& q_lhv, const Base<T>& q_rhv){
 
-using quaternionf = quaternion<float>;
-using quaterniond = quaternion<double>;
-using quaternionUf = quaternionU<float>;
-using quaternionUd = quaternionU<double>;
+        Base<T> q_res(  q_lhv.w() + q_rhv.w(),
+                        q_lhv.x() + q_rhv.x(),
+                        q_lhv.y() + q_rhv.y(),
+                        q_lhv.z() + q_rhv.z());
+
+        if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
+            return normalise(q_res);
+        }else{
+            return q_res;
+        }
+    }    
+
+
+    using quaternionf = quaternion<float>;
+    using quaterniond = quaternion<double>;
+    using quaternionUf = quaternionU<float>;
+    using quaternionUd = quaternionU<double>;
 
 }
 
