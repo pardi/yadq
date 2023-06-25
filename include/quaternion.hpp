@@ -37,7 +37,7 @@ namespace yadq{
 
                 return *this;
             }
-            constexpr qT& operator/=(const T rhv) {
+            constexpr qT& operator/=(const _T rhv) {
                 w_ /= rhv;
                 x_ /= rhv;
                 y_ /= rhv;
@@ -45,7 +45,12 @@ namespace yadq{
 
                 return *this;
             }
+            constexpr qT& operator*=(const qT& q_in){
 
+                *this = (*this) * q_in;            
+
+                return (*this);
+            }
             constexpr bool empty() const{
                 return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
             }
@@ -127,9 +132,9 @@ namespace yadq{
                 return q_res;
             }
         }
-        else {
-            return q_in;
-        }
+
+        return q_in;
+
     }
 
     template<typename T>
@@ -256,6 +261,27 @@ namespace yadq{
             return q_res;
         }
     }    
+
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto operator*(double val, const Base<T>& q_rhv){ 
+
+        Base<T> q_res(  q_rhv.w() * val,
+                        q_rhv.x() + val,
+                        q_rhv.y() + val,
+                        q_rhv.z() + val);
+
+        return normalise(q_res);
+    }
+
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto operator*(const Base<T>& q_lhv, double val){ 
+        return val * q_lhv;
+    }
+
 
 
     using quaternionf = quaternion<float>;
