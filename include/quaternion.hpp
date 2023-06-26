@@ -353,6 +353,31 @@ namespace yadq{
         return std::log(u_norm) + (u / u_norm) * angle;
     }
 
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr Base<T> dot(const Base<T>& q_lhv, const Base<T>& q_rhv){
+        return q_lhv.x() * q_rhv.x() + q_lhv.y() * q_rhv.y() + q_lhv.z() * q_rhv.z();
+    }
+
+
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr Base<T> interpolation(const Base<T>& q_start, const Base<T>& q_end, double t, InterpType interp_type = InterpType::LERP){
+        switch (interp_type)
+        {
+        case InterpType::LERP:
+            return q_start * (1.0 - t) + q_end * t;
+            break;
+        case InterpType::SLERP:
+            auto omega = dot(q_start, q_end);
+            return ((std::sin(1 - t) * omega) / std::sin(omega)) * q_start + (sin(t * omega) / sin(omega)) * q_end;
+            break;
+        default:
+            return q_start;
+        }
+    }
 
 
     using quaternionf = quaternion<float>;
