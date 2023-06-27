@@ -115,12 +115,6 @@ namespace yadq{
             }
     };
 
-    template<   bool _activate_flag = true,
-                template <typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr Base<T> normalise(const Base<T>& q_in);
-
     /*
         ------------------------------ Operators definition ------------------------------
     */ 
@@ -135,7 +129,7 @@ namespace yadq{
                         q_lhv.y() / rhv,
                         q_lhv.z() / rhv);
 
-        return normalise<false>(q_lhv);
+        return normalise(q_lhv);
     }
 
 
@@ -228,26 +222,22 @@ namespace yadq{
         ------------------------------ Fcn definition ------------------------------
     */
 
-    template<   bool _activate_flag = true,
-                template <typename> class Base, 
+    template<   template <typename> class Base, 
                 typename T, 
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
     constexpr Base<T> normalise(const Base<T>& q_in){
 
-        if constexpr (_activate_flag){
-            
-            if(auto d = q_in.norm(); d != 0.0) {
+        if(auto d = q_in.norm(); d != 0.0) {
 
-                Base<T> q_res(  q_in.w() / d, 
-                                q_in.x() / d, 
-                                q_in.y() / d, 
-                                q_in.z() / d);
-                return q_res;
-            }
+            Base<T> q_res(  q_in.w() / d, 
+                            q_in.x() / d, 
+                            q_in.y() / d, 
+                            q_in.z() / d);
+            return q_res;
         }
-
+    
         return q_in;
-
+  
     }
 
     template<typename T>
@@ -367,15 +357,15 @@ namespace yadq{
     constexpr Base<T> interpolation(const Base<T>& q_start, const Base<T>& q_end, double t, InterpType interp_type = InterpType::LERP){
         switch (interp_type)
         {
-        case InterpType::LERP:
-            return q_start * (1.0 - t) + q_end * t;
-            break;
-        case InterpType::SLERP:
-            auto omega = dot(q_start, q_end);
-            return ((std::sin(1 - t) * omega) / std::sin(omega)) * q_start + (sin(t * omega) / sin(omega)) * q_end;
-            break;
-        default:
-            return q_start;
+            case InterpType::LERP:
+                return q_start * (1.0 - t) + q_end * t;
+                break;
+            case InterpType::SLERP:
+                auto omega = dot(q_start, q_end);
+                return ((std::sin(1 - t) * omega) / std::sin(omega)) * q_start + (sin(t * omega) / sin(omega)) * q_end;
+                break;
+            default:
+                return q_start;
         }
     }
 
