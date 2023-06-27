@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <optional>
+#include <array>
 
 namespace yadq{
 
@@ -368,6 +369,40 @@ namespace yadq{
                 return q_start;
         }
     }
+
+    template<   template<typename> class Base, 
+                typename T, 
+                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
+    constexpr auto toRotation(const Base<T>& q){
+
+        auto a0 = pow(q.w(), 2);
+        auto a1 = pow(q.x(), 2);
+        auto a2 = pow(q.y(), 2);
+        auto a3 = pow(q.z(), 2);
+
+        auto a4 = q.x() * q.w();
+        auto a5 = q.x() * q.y();
+        auto a6 = q.x() * q.z();
+        
+        auto a7 = q.y() * q.w();
+        auto a8 = q.y() * q.x();
+        auto a9 = q.y() * q.z();
+
+        auto a10 = q.z() * q.w();
+        auto a11 = q.z() * q.x();
+        auto a12 = q.z() * q.y();
+
+        auto a13 = q.w() * q.x();
+        auto a14 = q.w() * q.y();
+        auto a15 = q.w() * q.z();
+
+        std::array<T, 9> R = {  2 * (a0 + a1) - 1, 2 * (a5 - a15), 2 * (a6 + a14),
+                                2 * (a5 + a15), 2 * (a0 + a2) - 1, 2 * (a9 - a13),
+                                2 * (a6 - a14), 2 * (a9 + a13), 2 * (a0 + a4) - 1};
+
+        return R;
+    }
+
 
 
     using quaternionf = quaternion<float>;
