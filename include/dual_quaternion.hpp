@@ -16,8 +16,21 @@ namespace yadq{
             using dqT = dualquaternion<_T>;    
 
         public:
-            quaternion<_T> qr_;
+            quaternionU<_T> qr_;
             quaternion<_T> qd_;
+
+            dualquaternion() = default;
+
+            dualquaternion(const dqT& qr, const dqT& qd){
+                qr_ = qr;
+                qd_ = qd;
+            }
+
+            dualquaternion(const quaternionU<_T>& r, const std::array<_T, 3> t){
+                qr_ = r;
+                quaternion<_T> q_t(0, t[0], t[1], t[2]);
+                qd_ = 0.5 * q_t * r;
+            }
     };
 
 
