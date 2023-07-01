@@ -122,7 +122,7 @@ namespace yadq{
             constexpr quaternionU<_T>& operator=(const quaternionU<_T>& q_in) = default;
 
             constexpr quaternionU<_T>& operator+=(const quaternionU<_T>& q_in){
-                *this = static_cast<quaternion<_T>>(*this) + static_cast<quaternion<_T>>(q_in);
+                static_cast<quaternion<_T>>(*this) = static_cast<quaternion<_T>>(*this) + static_cast<quaternion<_T>>(q_in);
                 
                 this->normalise();
                 return *this;
