@@ -28,6 +28,7 @@ namespace yadq{
         
             quaternion(): w_(1), x_(0), y_(0), z_(0) {}
             quaternion(_T w, _T x, _T y, _T z): w_(w), x_(x), y_(y), z_(z) {}
+            quaternion(const std::array<_T, 3>& axis, _T angle): w_(std::cos(angle / 2.0)), x_(axis[0] * std::sin(angle / 2.0)), y_(axis[1] * std::sin(angle / 2.0)), z_(axis[2] * std::sin(angle / 2.0)) {}
             
             quaternion(const qT& q_in) = default;
             constexpr qT& operator=(const qT& q_in) = default;
@@ -97,19 +98,22 @@ namespace yadq{
 
     };
 
-    template<typename T>
-    class quaternionU : public quaternion<T>{
+    template<typename _T>
+    class quaternionU : public quaternion<_T>{
         public:
-            quaternionU(): quaternion<T>(){}
-            quaternionU(T w, T x, T y, T z): quaternion<T>(w, x, y, z) {
+            quaternionU(): quaternion<_T>(){}
+            quaternionU(_T w, _T x, _T y, _T z): quaternion<_T>(w, x, y, z) {
                 this->normalise();
             }
-            
-            quaternionU(const quaternionU<T>& q_in): quaternion<T>(q_in) {}
-            constexpr quaternionU<T>& operator=(const quaternionU<T>& q_in) = default;
+            quaternionU(const std::array<_T, 3>& axis, _T angle): quaternion<_T>(axis, angle) {
+                this->normalise();
+            }
 
-            constexpr quaternionU<T>& operator+=(const quaternionU<T>& q_in){
-                *this = static_cast<quaternion<T>>(*this) + static_cast<quaternion<T>>(q_in);
+            quaternionU(const quaternionU<_T>& q_in): quaternion<_T>(q_in) {}
+            constexpr quaternionU<_T>& operator=(const quaternionU<_T>& q_in) = default;
+
+            constexpr quaternionU<_T>& operator+=(const quaternionU<_T>& q_in){
+                *this = static_cast<quaternion<_T>>(*this) + static_cast<quaternion<_T>>(q_in);
                 
                 this->normalise();
                 return *this;
@@ -360,7 +364,7 @@ namespace yadq{
     template<   template<typename> class Base, 
                 typename T, 
                 typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr auto toRotation(const Base<T>& q) noexcept{
+    constexpr auto quatToRotation(const Base<T>& q) noexcept{
 
         auto a0 = pow(q.w(), 2);
         auto a1 = pow(q.x(), 2);
