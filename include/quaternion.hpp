@@ -18,6 +18,7 @@ namespace yadq{
         private:
             using qT = quaternion<_T>;    
 
+        protected:
             _T w_;
             _T x_;
             _T y_;
@@ -28,7 +29,6 @@ namespace yadq{
         
             quaternion(): w_(1), x_(0), y_(0), z_(0) {}
             quaternion(_T w, _T x, _T y, _T z): w_(w), x_(x), y_(y), z_(z) {}
-            quaternion(const std::array<_T, 3>& axis, _T angle): w_(std::cos(angle / 2.0)), x_(axis[0] * std::sin(angle / 2.0)), y_(axis[1] * std::sin(angle / 2.0)), z_(axis[2] * std::sin(angle / 2.0)) {}
             
             quaternion(const qT& q_in) = default;
             constexpr qT& operator=(const qT& q_in) = default;
@@ -105,7 +105,16 @@ namespace yadq{
             quaternionU(_T w, _T x, _T y, _T z): quaternion<_T>(w, x, y, z) {
                 this->normalise();
             }
-            quaternionU(const std::array<_T, 3>& axis, _T angle): quaternion<_T>(axis, angle) {
+
+            quaternionU(const std::array<_T, 3>& axis, _T angle) {
+                
+                this->w_ = std::cos(angle / 2.0);
+
+                auto axis_norm = std::sqrt(std::pow(axis[0], 2) + std::pow(axis[1], 2) + std::pow(axis[2], 2));
+                this->x_ = axis[0] * std::sin(angle / 2.0) / axis_norm;
+                this->y_ = axis[1] * std::sin(angle / 2.0) / axis_norm;
+                this->z_ = axis[2] * std::sin(angle / 2.0) / axis_norm;
+
                 this->normalise();
             }
 
