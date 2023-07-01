@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <optional>
+#include <array>
 
 namespace yadq{
 
@@ -58,6 +59,17 @@ namespace yadq{
         dq_lhv.qd_ *= dq_rhv.qd_;
 
         return dq_lhv;
+    }
+
+    template<typename T>
+    constexpr std::array<T, 3> operator*(const dualquaternion<T>& dq_lhv, const std::array<T, 3>& p_rhv){
+        
+        std::array<T, 3> p_new;
+        dualquaternion<T> dq_t (quaternionU<T>(1, 0, 0, 0), p_rhv[0], p_rhv[0], p_rhv[0]);
+
+        dualquaternion<T> dq = dq_lhv * dq_t * conjugate(dq_lhv);
+
+        return dq;
     }
 
     template<typename T>
