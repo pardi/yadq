@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <quaternion.hpp>
 
-#define TOLLERANCE (1e-5)
+#define TOLERANCE (1e-5)
 
 TEST(Quaternion, DefaultClassInitialisation) {
   
@@ -36,9 +36,9 @@ TEST(Quaternion, Normalisation) {
     q.normalise();
 
     
-    EXPECT_NEAR(q.w(), (1.0 / 5.47722557505), TOLLERANCE);
-    EXPECT_NEAR(q.x(), (2.0 / 5.47722557505), TOLLERANCE);
-    EXPECT_NEAR(q.y(), (3.0 / 5.47722557505), TOLLERANCE);
-    EXPECT_NEAR(q.z(), (4.0 / 5.47722557505), TOLLERANCE);
+    EXPECT_NEAR(q.w(), (1.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.x(), (2.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.y(), (3.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.z(), (4.0 / 5.47722557505), TOLERANCE);
     
 }
