@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
-#include <quaternion.h>
+#include <quaternion.hpp>
 
 
 // Demonstrate some basic assertions.
 TEST(Quaternion, ClassInitialisation) {
   
-	quaternion<double> q;
+	yadq::quaternion<double> q;
 
     EXPECT_FALSE(false);
 

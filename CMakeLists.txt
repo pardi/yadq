@@ -18,3 +18,22 @@ target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE)
 
+# Tests
+add_subdirectory(deps/gtest)
+enable_testing()
+
+
+add_executable(
+  tests
+  tests/quaternion_test.cpp
+  )
+
+target_include_directories(tests 
+    PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(tests
+  GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(tests)
