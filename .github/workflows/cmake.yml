@@ -37,8 +37,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Test1
-      working-directory: ${{github.workspace}}/build
-      run: pwd && ls -la && echo ${{github.workspace}}
+      run: pwd && ls ${{github.workspace}}/build -la
     
     - name: Test2
       working-directory: ${{github.workspace}}/build
