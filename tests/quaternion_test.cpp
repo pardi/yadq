@@ -100,3 +100,58 @@ TEST(Quaternion, MemberConjugate) {
     EXPECT_NEAR(q.y(), -3, TOLERANCE);
     EXPECT_NEAR(q.z(), -4, TOLERANCE); 
 }
+
+TEST(QuaternionUnitary, DefaultConstructor) {
+  
+	yadq::quaternionU<double> q;
+
+    EXPECT_TRUE(q.w() == 1);
+    EXPECT_TRUE(q.x() == 0);
+    EXPECT_TRUE(q.y() == 0);
+    EXPECT_TRUE(q.z() == 0);
+    
+}
+
+TEST(QuaternionUnitary, Constructor) {
+  
+	yadq::quaternionU<double> q(1, 2, 3, 4);
+
+    EXPECT_NEAR(q.w(), (1.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.x(), (2.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.y(), (3.0 / 5.47722557505), TOLERANCE);
+    EXPECT_NEAR(q.z(), (4.0 / 5.47722557505), TOLERANCE);
+}
+
+TEST(QuaternionUnitary, ConstructorAxisAngle) {
+  
+	yadq::quaternionU<double> q({0.1690309, 0.8451543, 0.5070926}, 0.1745328);
+
+    EXPECT_NEAR(q.w(), 0.9961947, TOLERANCE);
+    EXPECT_NEAR(q.x(), 0.014732, TOLERANCE);
+    EXPECT_NEAR(q.y(), 0.07366, TOLERANCE);
+    EXPECT_NEAR(q.z(), 0.044196, TOLERANCE);
+}
+
+TEST(QuaternionUnitary, MemberOperatorEqual) {
+  
+	yadq::quaternionU<double> q1(1, 0, 1, 0);
+    yadq::quaternionU<double> q2 = q1;
+
+    EXPECT_NEAR(q2.w(), q1.w(), TOLERANCE);
+    EXPECT_NEAR(q2.x(), q1.x(), TOLERANCE);
+    EXPECT_NEAR(q2.y(), q1.y(), TOLERANCE);
+    EXPECT_NEAR(q2.z(), q1.z(), TOLERANCE);
+}
+
+TEST(QuaternionUnitary, MemberOperatorPlus) {
+  
+	yadq::quaternionU<double> q1(0, 0.7071068, 0, 0.7071068);
+    yadq::quaternionU<double> q2(0, 0.7071068, 0, 0.7071068);
+
+    q1 += q2;
+
+    EXPECT_NEAR(q1.w(), 0, TOLERANCE);
+    EXPECT_NEAR(q1.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(q1.y(), 0, TOLERANCE);
+    EXPECT_NEAR(q1.z(), 0.7071068, TOLERANCE);
+}
