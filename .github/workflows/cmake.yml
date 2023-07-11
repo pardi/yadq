@@ -17,16 +17,17 @@ jobs:
       image: alpine:latest
       
     steps:
+    
+    - name: Install dependencies
+      run: |
+        apk add --no-cache git cmake make g++ libc-dev
+        
     - name: Checkout repo 
       uses: actions/checkout@v2
       
     - name: Checkout submodules
       run: |
         git submodule update --init --recursive
-
-    - name: Install dependencies
-      run: |
-        apk add --no-cache cmake make g++ libc-dev
         
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
