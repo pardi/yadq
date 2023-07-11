@@ -38,7 +38,7 @@ namespace yadq{
                 y_ += q_in.y_;
                 z_ += q_in.z_;
 
-                return *this;
+                return (*this);
             }
             constexpr qT& operator/=(const _T rhv) {
                 w_ /= rhv;
@@ -46,7 +46,7 @@ namespace yadq{
                 y_ /= rhv;
                 z_ /= rhv;
 
-                return *this;
+                return (*this);
             }
             constexpr qT& operator*=(const qT& q_in){
 
