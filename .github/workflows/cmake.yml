@@ -36,6 +36,10 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Test
+    - name: Test1
       working-directory: ${{github.workspace}}/build
-      run: pwd && ls -la && echo ${{github.workspace}} && ctest -C ${{env.BUILD_TYPE}} -V
+      run: pwd && ls -la && echo ${{github.workspace}}
+    
+    - name: Test2
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}} -V
