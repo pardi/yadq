@@ -143,7 +143,7 @@ namespace yadq{
     */ 
 
     template<   typename T, 
-                typename = std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+                typename = std::enable_if_t<is_base_of_quaternion_v<T>>>
     constexpr inline auto operator/(const T& q_lhv, double rhv) {
 
         T q_res(    q_lhv.w() / rhv,
@@ -160,7 +160,7 @@ namespace yadq{
 
     template<   typename T,
                 typename U, 
-                typename = std::enable_if_t<is_base_of_template_v<T, quaternion> && is_base_of_template_v<U, quaternion>>>
+                typename = std::enable_if_t<is_base_of_quaternion_v<T> && is_base_of_quaternion_v<U>>>
     constexpr inline auto operator+(const T& q_lhv, const U& q_rhv) noexcept{
 
         T q_res(    q_lhv.w() + q_rhv.w(),
@@ -177,7 +177,7 @@ namespace yadq{
 
     template<   typename T,
                 typename U,
-                typename = std::enable_if_t<is_base_of_template_v<T, quaternion> && is_base_of_template_v<U, quaternion>>>
+                typename = std::enable_if_t<is_base_of_quaternion_v<T> && is_base_of_quaternion_v<U>>>
     constexpr auto operator*(const T& q_lhv, const U& q_rhv) noexcept{
 
         if constexpr (is_quaternion_v<T> && is_quaternionU_v<U>){
@@ -198,7 +198,7 @@ namespace yadq{
     */
 
     template<   typename T, 
-                typename =  std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
     constexpr auto normalise(const T& q_in) noexcept{
 
         if(auto d = q_in.norm(); d != 0.0) {
@@ -220,7 +220,7 @@ namespace yadq{
     }
 
     template<   typename T,
-                typename =  std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
     constexpr inline auto hamilton_prod(const T& q_lhv, const T& q_rhv) noexcept{
 
         T q_res(    q_lhv.w() * q_rhv.w() - q_lhv.x() * q_rhv.x() - q_lhv.y() * q_rhv.y() - q_lhv.z() * q_rhv.z(),

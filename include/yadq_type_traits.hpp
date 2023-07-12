@@ -11,18 +11,16 @@ namespace yadq {
 
     template<typename _T>
     class quaternionU;
-    
-    template< template<typename> class C>
-    std::false_type is_base_of_template_impl();
 
-    template< template<typename> class C, typename T>
-    std::true_type is_base_of_template_impl(const C<T>*);
-    
-    template<typename T, template <typename> class C>
-    using is_base_of_template = decltype(is_base_of_template_impl<C>(std::declval<T*>()));
+    template<typename>
+    struct is_base_of_quaternion : std::false_type {};
 
-    template<typename T, template <typename> class C>
-    constexpr bool is_base_of_template_v = is_base_of_template<T, C>::value;
+    template<   template<typename...> class Base, 
+                typename... Ts>
+    struct is_base_of_quaternion<Base<Ts...>> : std::is_base_of<quaternion<Ts...>, Base<Ts...>> {}; 
+
+    template<typename T>
+    constexpr bool is_base_of_quaternion_v = is_base_of_quaternion<T>::value;
 
     template<typename>
     struct is_quaternion : std::false_type {};
