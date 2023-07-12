@@ -332,5 +332,46 @@ TEST(QuaternionUnitary, Inverse) {
     EXPECT_NEAR(q_inv.z(), -0.7071068, TOLERANCE);
 }
 
+TEST(CrossFunctions, conjugate) {
+  
+	yadq::quaternion<double> q1(1, 2, 3, 4);
+    yadq::quaternionU<double> q2(0, 0.7071068, 0, 0.7071068);
+
+    yadq::quaternion<double> q_res = conjugate(q1);
+
+    EXPECT_NEAR(q_res.w(), 1, TOLERANCE);
+    EXPECT_NEAR(q_res.x(), -2, TOLERANCE);
+    EXPECT_NEAR(q_res.y(), -3, TOLERANCE);
+    EXPECT_NEAR(q_res.z(), -4, TOLERANCE);
+
+    yadq::quaternionU<double> qU_res = conjugate(q2);
+
+    EXPECT_NEAR(qU_res.w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), -0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), -0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), -0.7071068, TOLERANCE);
+}
+
+TEST(CrossFunctions, dot) {
+  
+	yadq::quaternion<double> q1(1, 2, 3, 4);
+    yadq::quaternionU<double> q2(1, 0, 0, 0);
+
+    double res = dot(q1, q1);
+
+
+    EXPECT_NEAR(res, 29, TOLERANCE);
+
+    res = dot(q2, q2);
+    
+    EXPECT_NEAR(res, 0, TOLERANCE);
+    
+}
+
+// TEST to add
+// TODO: exp
+// TODO: acos
+// TODO: log
+     
 
 

@@ -318,6 +318,64 @@ namespace yadq{
             return quaternionU<T>(0, 0, 0, 0);
         }
     }
+
+    template<   typename T,
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
+    constexpr auto conjugate(const T& q) noexcept{
+        T q_res(q);
+        q_res.conjugate();
+        return q_res;
+    }
+
+    template<   typename T,
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
+    constexpr auto exp(const T& q_in) noexcept{
+        T q_conj(q_in);
+        q_conj.conjugate();
+
+        auto u = (q_in - q_conj) / 2.0;
+        auto u_norm = u.norm();
+
+        return std::exp(q_in.w()) + (std::cos(u_norm) + (u / u_norm) * std::sin(u_norm));
+    }
+
+    template<   typename T,
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
+    constexpr std::optional<T> acos(const T& q_in) noexcept {
+        
+        if constexpr (q_in.empty()){
+            return std::nullopt;
+        }
+        return std::acos(q_in.w() / q_in.norm());
+    }
+
+    template<   typename T,
+                typename =  std::enable_if_t<is_base_of_quaternion_v<T>>>
+    constexpr std::optional<T>log(const T& q_in)  noexcept{
+        
+        T q_conj(q_in);
+        q_conj.conjugate();
+
+        auto u = (q_in - q_conj) / 2.0;
+        auto u_norm = u.norm();
+
+        auto angle = acos(q_in);
+
+        if (angle == std::nullopt){
+            return std::nullopt;
+        }
+
+        return std::log(u_norm) + (u / u_norm) * angle;
+    }
+
+
+    template<   typename T,
+                typename U,
+                typename = std::enable_if_t<is_base_of_quaternion_v<T> && is_base_of_quaternion_v<U>>>
+    constexpr auto dot(const T& q_lhv, const U& q_rhv) noexcept{
+        return q_lhv.x() * q_rhv.x() + q_lhv.y() * q_rhv.y() + q_lhv.z() * q_rhv.z();
+    }
+
 }
 
 #endif
