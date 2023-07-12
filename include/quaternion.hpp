@@ -59,21 +59,21 @@ namespace yadq{
                 return (*this);
             }
 
-            constexpr qT operator*(double value) noexcept {
+            constexpr qT operator*(double value) const noexcept{
                 return qT(  w_ * value, 
                             x_ * value, 
                             y_ * value, 
                             z_ * value);
             }
 
-            constexpr qT operator+(double value) noexcept {
+            constexpr qT operator+(double value) const noexcept{
                 return qT(  w_ + value, 
                             x_ + value, 
                             y_ + value, 
                             z_ + value);
             }
 
-            constexpr qT operator-(double value) noexcept{
+            constexpr qT operator-(double value) const noexcept{
 
                 return qT(  w_ - value,
                             x_ - value,
@@ -162,15 +162,15 @@ namespace yadq{
                 return (*this);
             }
 
-            constexpr quaternionU<_T> operator*(double value){
+            constexpr quaternionU<_T> operator*(double value) const noexcept{
                 return quaternionU<_T>(static_cast<quaternion<_T>>(*this) * value);
             }
 
-            constexpr quaternionU<_T> operator+(double value){
+            constexpr quaternionU<_T> operator+(double value) const noexcept{
                 return quaternionU<_T>(static_cast<quaternion<_T>>(*this) + value);
             }
 
-            constexpr quaternionU<_T> operator-(double value){
+            constexpr quaternionU<_T> operator-(double value) const noexcept{
                 return quaternionU<_T>(static_cast<quaternion<_T>>(*this) - value);
             }
 
@@ -306,7 +306,7 @@ namespace yadq{
 
 
     template< typename T>
-    constexpr inline auto inverse(const quaternionU<T>& q_in) {
+    constexpr auto inverse(const quaternionU<T>& q_in) {
 
         if(!q_in.empty()){
             quaternionU<T> q_conj = q_in;
@@ -376,6 +376,22 @@ namespace yadq{
         return q_lhv.x() * q_rhv.x() + q_lhv.y() * q_rhv.y() + q_lhv.z() * q_rhv.z();
     }
 
+    template< typename T>
+    constexpr quaternionU<T> interpolation(const quaternionU<T>& q_start, const quaternionU<T>& q_end, double t, InterpType interp_type = InterpType::LERP) noexcept{
+        switch (interp_type)
+        {
+        case InterpType::LERP:{                
+                return q_start * (1.0 - t) + q_end * t;
+            }
+        case InterpType::SLERP:{
+                auto omega = dot(q_start, q_end);
+                return ((std::sin(1 - t) * omega) / std::sin(omega)) * q_start + (sin(t * omega) / sin(omega)) * q_end;
+            }
+        default: {
+                return q_start;
+            }
+        }
+    }
 }
 
 #endif

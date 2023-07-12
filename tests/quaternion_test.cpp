@@ -359,12 +359,33 @@ TEST(CrossFunctions, dot) {
 
     double res = dot(q1, q1);
 
-
     EXPECT_NEAR(res, 29, TOLERANCE);
 
     res = dot(q2, q2);
     
     EXPECT_NEAR(res, 0, TOLERANCE);
+    
+}
+
+TEST(CrossFunctions, Interpolation) {
+  
+	yadq::quaternionU<double> q1(0, 0.7071068, 0, 0.7071068);
+    yadq::quaternionU<double> q2(0, -0.7071068, 0, -0.7071068);
+
+
+    yadq::quaternionU<double> qU_res = interpolation(q1, q2, 1.0);
+
+    EXPECT_NEAR(qU_res.w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), -0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), -0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), -0.7071068, TOLERANCE);
+
+    qU_res = interpolation(q1, q2, 0.0);
+
+    EXPECT_NEAR(qU_res.w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), 0.0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), 0.7071068, TOLERANCE);
     
 }
 
