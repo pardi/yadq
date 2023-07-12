@@ -392,6 +392,32 @@ namespace yadq{
             }
         }
     }
+
+    template< typename T>
+    constexpr auto quatToRotation(const quaternionU<T>& q_in) noexcept{
+
+        auto a0 = pow(q_in.w(), 2);
+        auto a1 = pow(q_in.x(), 2);
+        auto a2 = pow(q_in.y(), 2);
+        auto a3 = pow(q_in.z(), 2);
+
+        auto a4 = q_in.w() * q_in.x();
+        auto a5 = q_in.w() * q_in.y();
+        auto a6 = q_in.w() * q_in.z();
+
+        auto a7 = q_in.x() * q_in.y();
+        auto a8 = q_in.x() * q_in.z();
+        
+        auto a9 = q_in.y() * q_in.z();
+
+        std::array<T, 9> R = {  2 * (a0 + a1) - 1, 2 * (a7 - a6), 2 * (a8 + a5),
+                                2 * (a7 + a6), 2 * (a0 + a2) - 1, 2 * (a9 - a4),
+                                2 * (a8 - a5), 2 * (a9 + a4), 2 * (a0 + a3) - 1};
+
+        return R;
+    }
+
 }
+
 
 #endif

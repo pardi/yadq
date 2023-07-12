@@ -389,6 +389,27 @@ TEST(CrossFunctions, Interpolation) {
     
 }
 
+
+TEST(CrossFunctions, QuatToRotation) {
+  
+	yadq::quaternionU<double> q1(0, 0.7071068, 0, 0.7071068);
+
+    std::array<double, 9> R = quatToRotation(q1);
+
+    EXPECT_NEAR(R[0], 0.0, TOLERANCE);
+    EXPECT_NEAR(R[1], 0.0, TOLERANCE);
+    EXPECT_NEAR(R[2], 1.0, TOLERANCE);
+
+    EXPECT_NEAR(R[3], 0.0, TOLERANCE);
+    EXPECT_NEAR(R[4], -1.0, TOLERANCE);
+    EXPECT_NEAR(R[5], 0.0, TOLERANCE);
+    
+    EXPECT_NEAR(R[6], 1.0, TOLERANCE);
+    EXPECT_NEAR(R[7], 0.0, TOLERANCE);
+    EXPECT_NEAR(R[8], 0.0, TOLERANCE);
+    
+}
+
 // TEST to add
 // TODO: exp
 // TODO: acos
