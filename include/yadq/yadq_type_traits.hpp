@@ -1,7 +1,7 @@
 #ifndef QUATERNION_TYPE_TRAITS_HPP
 #define QUATERNION_TYPE_TRAITS_HPP
 
-#include <quaternion.hpp>
+#include <yadq/quaternion.hpp>
 #include <type_traits>
 
 namespace yadq {

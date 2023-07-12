@@ -7,6 +7,7 @@
 #include <cmath>
 #include <optional>
 #include <array>
+#include <yadq/quaternion.hpp>
 
 namespace yadq{
 
@@ -21,8 +22,7 @@ namespace yadq{
             quaternion<_T> qd_;
 
             dualquaternion() = default;
-
-            dualquaternion(const dqT& qr, const dqT& qd){
+            dualquaternion(const quaternionU<_T>& qr, const quaternion<_T>& qd){
                 qr_ = qr;
                 qd_ = qd;
             }
@@ -32,23 +32,24 @@ namespace yadq{
                 quaternion<_T> q_t(0, t[0], t[1], t[2]);
                 qd_ = 0.5 * q_t * r;
             }
+
+            template< typename T>
+            constexpr dqT operator*(quaternionU<T> q_rhv) const noexcept{
+                return dqT( qr_ * q_rhv,
+                            qd_ * q_rhv);
+            }
     };
 
 
-    template<   typename T, 
-                typename U>
-    constexpr dualquaternion<T> operator*(dualquaternion<T> dq_lhv, U rhv){
-        
-        dq_lhv.qr_ *= rhv;
-        dq_lhv.qd_ *= rhv; 
-
-        return dq_lhv;
+    template<typename T>
+    std::ostream& operator<<(std::ostream &os, const dualquaternion<T>& dq_in) noexcept{ 
+        return os <<    "q [w: " << dq_in.qr_.w() << " x: " << dq_in.qr_.x() << " y: " << dq_in.qr_.y() << " z: " << dq_in.qr_.z() << "]" << std::endl <<
+                        "t [w: " << dq_in.qd_.w() << " x: " << dq_in.qd_.x() << " y: " << dq_in.qd_.y() << " z: " << dq_in.qd_.z() << "]" ;
     }
 
-    template<   typename T, 
-                typename U>
-    constexpr dualquaternion<T> operator*(U lhv, dualquaternion<T> dq_rhv){
-        
+
+    template< typename T>
+    constexpr dualquaternion<T> operator*(quaternionU<T> lhv, dualquaternion<T> dq_rhv){
         return dq_rhv * lhv;
     }
 

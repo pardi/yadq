@@ -8,7 +8,7 @@
 #include <cmath>
 #include <optional>
 #include <array>
-#include <yadq_type_traits.hpp>
+#include <yadq/yadq_type_traits.hpp>
 
 namespace yadq{
 

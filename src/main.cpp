@@ -1,4 +1,4 @@
-#include <quaternion.hpp>
+#include <yadq/quaternion.hpp>
 
 int main(){
     yadq::quaterniond q;
