@@ -174,7 +174,6 @@ namespace yadq{
         }
     }    
 
-
     template<   typename T,
                 typename U,
                 typename = std::enable_if_t<is_base_of_template_v<T, quaternion> && is_base_of_template_v<U, quaternion>>>
