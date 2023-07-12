@@ -1,3 +1,4 @@
+
 #ifndef QUATERNION_HPP
 #define QUATERNION_HPP
 
@@ -7,6 +8,7 @@
 #include <cmath>
 #include <optional>
 #include <array>
+// #include <yadq_type_traits.hpp>
 
 namespace yadq{
 
@@ -130,124 +132,116 @@ namespace yadq{
             }
     };
 
+
+    using quaternionf = quaternion<float>;
+    using quaterniond = quaternion<double>;
+    using quaternionUf = quaternionU<float>;
+    using quaternionUd = quaternionU<double>;
+
+    /*
+        ---------------------------------- Type traits -------*--------------------------
+    */ 
+
+    template< template<typename> class C>
+    std::false_type is_base_of_template_impl();
+
+    template< template<typename> class C, typename T>
+    std::true_type is_base_of_template_impl(const C<T>*);
+    
+    template<typename T, template <typename> class C>
+    using is_base_of_template = decltype(is_base_of_template_impl<C>(std::declval<T*>()));
+
+    template<typename T, template <typename> class C>
+    constexpr bool is_base_of_template_v = is_base_of_template<T, C>::value;
+
+    template<typename>
+    struct is_quaternion : std::false_type {};
+
+    template<typename T>
+    struct is_quaternion<quaternion<T>> : std::true_type {};
+
+    template<typename T>
+    constexpr bool is_quaternion_v = is_quaternion<T>::value;
+
+    template<typename>
+    struct is_quaternionU : std::false_type {};
+
+    template<typename T>
+    struct is_quaternionU<quaternionU<T>> : std::true_type {};
+    
+    template<typename T>
+    constexpr bool is_quaternionU_v = is_quaternionU<T>::value;
+
+
     /*
         ------------------------------ Operators definition ------------------------------
     */ 
 
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto operator/(const Base<T>& q_lhv, double rhv) {
+    template<   typename T, 
+                typename = std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+    constexpr inline auto operator/(const T& q_lhv, double rhv) {
 
-        Base<T> q_res(  q_lhv.w() / rhv,
-                        q_lhv.x() / rhv,
-                        q_lhv.y() / rhv,
-                        q_lhv.z() / rhv);
+        T q_res(    q_lhv.w() / rhv,
+                    q_lhv.x() / rhv,
+                    q_lhv.y() / rhv,
+                    q_lhv.z() / rhv);
 
-        return normalise(q_lhv);
-    }
-
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto operator-(const Base<T>& q_lhv, const Base<T>& q_rhv) noexcept{
-
-        Base<T> q_res(  q_lhv.w() - q_rhv.w(),
-                        q_lhv.x() - q_rhv.x(),
-                        q_lhv.y() - q_rhv.y(),
-                        q_lhv.z() - q_rhv.z());
-
-        if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
+       if constexpr (is_quaternionU_v<T>){
             return normalise(q_res);
         }else{
             return q_res;
         }
     }
 
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto operator+(const Base<T>& q_lhv, const Base<T>& q_rhv) noexcept{
+    template<   typename T, 
+                typename = std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+    constexpr inline auto operator+(const T& q_lhv, const T& q_rhv) noexcept{
 
-        Base<T> q_res(  q_lhv.w() + q_rhv.w(),
-                        q_lhv.x() + q_rhv.x(),
-                        q_lhv.y() + q_rhv.y(),
-                        q_lhv.z() + q_rhv.z());
+        T q_res(    q_lhv.w() + q_rhv.w(),
+                    q_lhv.x() + q_rhv.x(),
+                    q_lhv.y() + q_rhv.y(),
+                    q_lhv.z() + q_rhv.z());
 
-        if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
+        if constexpr (is_quaternionU_v<T>){
             return normalise(q_res);
         }else{
             return q_res;
         }
     }    
 
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto operator+(const Base<T>& q_lhv, double rhv) noexcept{
 
-        Base<T> q_res(  q_lhv.w() + rhv,
-                        q_lhv.x() + rhv,
-                        q_lhv.y() + rhv,
-                        q_lhv.z() + rhv);
+    template<   typename T,
+                typename U,
+                typename = std::enable_if_t<is_base_of_template_v<T, quaternion> && is_base_of_template_v<U, quaternion>>>
+    constexpr auto operator*(const T& q_lhv, const U& q_rhv) noexcept{
 
-        if constexpr (std::is_same_v<Base<T>, quaternionU<T>>){
-            return normalise(q_res);
-        }else{
-            return q_res;
+        if constexpr (is_quaternion_v<T> && is_quaternionU_v<U>){
+            return hamilton_prod(q_lhv, static_cast<T>(q_rhv));
         }
-    }  
+        
+        if constexpr (is_quaternionU_v<T> && is_quaternion_v<U>){
+            return hamilton_prod(static_cast<U>(q_lhv), q_rhv);
+        }
 
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto operator+(double lhv, const Base<T>& q_rhv) noexcept{
-        return q_rhv + lhv;
-    }  
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr auto operator*(double val, const Base<T>& q_rhv) noexcept{ 
-
-        Base<T> q_res(  q_rhv.w() * val,
-                        q_rhv.x() + val,
-                        q_rhv.y() + val,
-                        q_rhv.z() + val);
-
-        return normalise(q_res);
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr auto operator*(const Base<T>& q_lhv, double val) noexcept{ 
-        return val * q_lhv;
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr auto operator*(const Base<T>& q_lhv, const Base<T>& q_rhv) noexcept {
-        return hamilton_prod(q_lhv, q_rhv);
+        if constexpr ((is_quaternionU_v<T> && is_quaternionU_v<U>) || (is_quaternion_v<T> && is_quaternion_v<U>)){
+            return hamilton_prod(q_lhv, q_rhv);
+        }
     }
 
     /*
         ------------------------------ Fcn definition ------------------------------
     */
 
-    template<   template <typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr Base<T> normalise(const Base<T>& q_in) noexcept{
+    template<   typename T, 
+                typename =  std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+    constexpr auto normalise(const T& q_in) noexcept{
 
         if(auto d = q_in.norm(); d != 0.0) {
 
-            Base<T> q_res(  q_in.w() / d, 
-                            q_in.x() / d, 
-                            q_in.y() / d, 
-                            q_in.z() / d);
+            T q_res(    q_in.w() / d, 
+                        q_in.x() / d, 
+                        q_in.y() / d, 
+                        q_in.z() / d);
             return q_res;
         }
     
@@ -260,150 +254,17 @@ namespace yadq{
         return os << "w: " << q_in.w() << " x: " << q_in.x() << " y: " << q_in.y() << " z: " << q_in.z();
     }
 
-    template<   template <typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto hamilton_prod(const Base<T>& q_lhv, const Base<T>& q_rhv) noexcept{
+    template<   typename T,
+                typename =  std::enable_if_t<is_base_of_template_v<T, quaternion>>>
+    constexpr inline auto hamilton_prod(const T& q_lhv, const T& q_rhv) noexcept{
 
-        Base<T> q_res(  q_lhv.w() * q_rhv.w() - q_lhv.x() * q_rhv.x() - q_lhv.y() * q_rhv.y() - q_lhv.z() * q_rhv.z(),
-                        q_lhv.w() * q_rhv.x() + q_lhv.x() * q_rhv.w() + q_lhv.y() * q_rhv.z() - q_lhv.z() * q_rhv.y(),
-                        q_lhv.w() * q_rhv.y() - q_lhv.x() * q_rhv.z() + q_lhv.y() * q_rhv.w() + q_lhv.z() * q_rhv.x(),
-                        q_lhv.w() * q_rhv.z() + q_lhv.x() * q_rhv.y() - q_lhv.y() * q_rhv.x() + q_lhv.z() * q_rhv.w());
-
-        return q_res;
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr inline auto inverse(const Base<T>& q_in) {
-
-        if(!q_in.empty()){
-            Base<T> q_conj = q_in;
-            q_conj.conjugate();
-
-            return q_conj / pow(q_in.norm(), 2);;
-        }
-        else{
-            return Base<T>(0, 0, 0, 0);
-        }
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    inline constexpr Base<T> conjugate(const Base<T>& q) noexcept{
-        Base<T> q_res(q);
-        q_res.conjugate();
+        T q_res(    q_lhv.w() * q_rhv.w() - q_lhv.x() * q_rhv.x() - q_lhv.y() * q_rhv.y() - q_lhv.z() * q_rhv.z(),
+                    q_lhv.w() * q_rhv.x() + q_lhv.x() * q_rhv.w() + q_lhv.y() * q_rhv.z() - q_lhv.z() * q_rhv.y(),
+                    q_lhv.w() * q_rhv.y() - q_lhv.x() * q_rhv.z() + q_lhv.y() * q_rhv.w() + q_lhv.z() * q_rhv.x(),
+                    q_lhv.w() * q_rhv.z() + q_lhv.x() * q_rhv.y() - q_lhv.y() * q_rhv.x() + q_lhv.z() * q_rhv.w());
 
         return q_res;
     }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    inline constexpr Base<T> exp(const Base<T>& q_in) noexcept{
-        Base<T> q_conj(q_in);
-        q_conj.conjugate();
-
-        auto u = (q_in - q_conj) / 2.0;
-        auto u_norm = u.norm();
-
-        return std::exp(q_in.w()) + (std::cos(u_norm) + (u / u_norm) * std::sin(u_norm));;
-        
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr std::optional<Base<T>> acos(const Base<T>& q_in) noexcept {
-        
-        if constexpr (q_in.empty()){
-            return std::nullopt;
-        }
-
-        return std::acos(q_in.w() / q_in.norm());
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr std::optional<Base<T>>log(const Base<T>& q_in)  noexcept{
-        
-        Base<T> q_conj(q_in);
-        q_conj.conjugate();
-
-        auto u = (q_in - q_conj) / 2.0;
-        auto u_norm = u.norm();
-
-        auto angle = acos(q_in);
-
-        if (angle == std::nullopt){
-            return std::nullopt;
-        }
-
-        return std::log(u_norm) + (u / u_norm) * angle;
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr Base<T> dot(const Base<T>& q_lhv, const Base<T>& q_rhv) noexcept{
-        return q_lhv.x() * q_rhv.x() + q_lhv.y() * q_rhv.y() + q_lhv.z() * q_rhv.z();
-    }
-
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr Base<T> interpolation(const Base<T>& q_start, const Base<T>& q_end, double t, InterpType interp_type = InterpType::LERP) noexcept{
-        switch (interp_type)
-        {
-            case InterpType::LERP:
-                return q_start * (1.0 - t) + q_end * t;
-                break;
-            case InterpType::SLERP:
-                auto omega = dot(q_start, q_end);
-                return ((std::sin(1 - t) * omega) / std::sin(omega)) * q_start + (sin(t * omega) / sin(omega)) * q_end;
-                break;
-            default:
-                return q_start;
-        }
-    }
-
-    template<   template<typename> class Base, 
-                typename T, 
-                typename =  std::enable_if_t<std::is_base_of_v<quaternion<T>, Base<T>>>>
-    constexpr auto quatToRotation(const Base<T>& q) noexcept{
-
-        auto a0 = pow(q.w(), 2);
-        auto a1 = pow(q.x(), 2);
-        auto a2 = pow(q.y(), 2);
-        auto a3 = pow(q.z(), 2);
-
-        auto a4 = q.w() * q.x();
-        auto a5 = q.w() * q.y();
-        auto a6 = q.w() * q.z();
-
-        auto a7 = q.x() * q.y();
-        auto a8 = q.x() * q.z();
-        
-        auto a9 = q.y() * q.z();
-
-        std::array<T, 9> R = {  2 * (a0 + a1) - 1, 2 * (a7 - a6), 2 * (a8 + a5),
-                                2 * (a7 + a6), 2 * (a0 + a2) - 1, 2 * (a9 - a4),
-                                2 * (a8 - a5), 2 * (a9 + a4), 2 * (a0 + a3) - 1};
-
-        return R;
-    }
-
-
-
-    using quaternionf = quaternion<float>;
-    using quaterniond = quaternion<double>;
-    using quaternionUf = quaternionU<float>;
-    using quaternionUd = quaternionU<double>;
-
 }
 
 #endif

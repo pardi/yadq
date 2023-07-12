@@ -155,3 +155,42 @@ TEST(QuaternionUnitary, MemberOperatorPlus) {
     EXPECT_NEAR(q1.y(), 0, TOLERANCE);
     EXPECT_NEAR(q1.z(), 0.7071068, TOLERANCE);
 }
+
+
+TEST(CrossFunctions, OperatorMultiplication) {
+  
+	yadq::quaternion<double> q1(0, 0.7071068, 0, 0.7071068);
+    yadq::quaternion<double> q2(1, 0, 0, 0);
+    yadq::quaternionU<double> q3(1, 0, 0, 0);
+    yadq::quaternionU<double> q4(0, 0.7071068, 0, 0.7071068);
+
+    yadq::quaternion<double> q_res = q1 * q2;
+
+    EXPECT_NEAR(q_res.w(), 0, TOLERANCE);
+    EXPECT_NEAR(q_res.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(q_res.y(), 0, TOLERANCE);
+    EXPECT_NEAR(q_res.z(), 0.7071068, TOLERANCE);
+
+    yadq::quaternionU<double> qU_res = q3 * q4;
+
+    EXPECT_NEAR(qU_res.w(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), 0.7071068, TOLERANCE);
+
+    q_res = q3 * q1;
+
+    EXPECT_NEAR(qU_res.w(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), 0.7071068, TOLERANCE);
+
+    q_res = q2 * q4;
+
+    EXPECT_NEAR(qU_res.w(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(qU_res.y(), 0, TOLERANCE);
+    EXPECT_NEAR(qU_res.z(), 0.7071068, TOLERANCE);
+
+
+}
