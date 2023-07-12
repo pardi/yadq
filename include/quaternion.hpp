@@ -303,6 +303,21 @@ namespace yadq{
 
         return q_res;
     }
+
+
+    template< typename T>
+    constexpr inline auto inverse(const quaternionU<T>& q_in) {
+
+        if(!q_in.empty()){
+            quaternionU<T> q_conj = q_in;
+            q_conj.conjugate();
+
+            return q_conj / pow(q_in.norm(), 2);
+        }
+        else{
+            return quaternionU<T>(0, 0, 0, 0);
+        }
+    }
 }
 
 #endif

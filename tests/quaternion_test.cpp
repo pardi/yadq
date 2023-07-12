@@ -320,3 +320,17 @@ TEST(Quaternion, OperatorMinus) {
     EXPECT_NEAR(q_res.z(), 3.0, TOLERANCE);
 }
 
+TEST(QuaternionUnitary, Inverse) {
+  
+	yadq::quaternionU<double> q(0, 0.7071068, 0, 0.7071068);
+
+    yadq::quaternionU<double> q_inv = inverse(q);
+
+    EXPECT_NEAR(q_inv.w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(q_inv.x(), -0.7071068, TOLERANCE);
+    EXPECT_NEAR(q_inv.y(), 0.0, TOLERANCE);
+    EXPECT_NEAR(q_inv.z(), -0.7071068, TOLERANCE);
+}
+
+
+
