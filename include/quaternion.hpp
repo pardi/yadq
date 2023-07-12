@@ -31,10 +31,10 @@ namespace yadq{
         
             quaternion(): w_(1), x_(0), y_(0), z_(0) {}
             quaternion(_T w, _T x, _T y, _T z): w_(w), x_(x), y_(y), z_(z) {}
-            
             quaternion(const qT& q_in) = default;
             constexpr qT& operator=(const qT& q_in) = default;
-            constexpr qT& operator+=(const qT& q_in) {
+
+            constexpr qT& operator+=(const qT& q_in) noexcept{
                 w_ += q_in.w_;
                 x_ += q_in.x_;
                 y_ += q_in.y_;
@@ -42,6 +42,7 @@ namespace yadq{
 
                 return (*this);
             }
+
             constexpr qT& operator/=(const _T rhv) {
                 w_ /= rhv;
                 x_ /= rhv;
@@ -50,12 +51,21 @@ namespace yadq{
 
                 return (*this);
             }
-            constexpr qT& operator*=(const qT& q_in){
+
+            constexpr qT& operator*=(const qT& q_in) noexcept{
 
                 *this = (*this) * q_in;            
 
                 return (*this);
             }
+
+            constexpr qT operator*(double value) noexcept {
+                return qT(   w_ * value, 
+                            x_ * value, 
+                            y_ * value, 
+                            z_ * value);
+            }
+
             constexpr bool empty() const{
                 return (w_ == 0 && x_ == 0 && y_ == 0 && z_ == 0);
             }
@@ -104,6 +114,7 @@ namespace yadq{
     class quaternionU : public quaternion<_T>{
         public:
             quaternionU(): quaternion<_T>(){}
+            quaternionU(const quaternion<_T>& q_in): quaternion<_T>(q_in){}
             quaternionU(_T w, _T x, _T y, _T z): quaternion<_T>(w, x, y, z) {
                 this->normalise();
             }
@@ -125,11 +136,22 @@ namespace yadq{
 
             constexpr quaternionU<_T>& operator+=(const quaternionU<_T>& q_in){
             
-                static_cast<quaternion<_T>>(*this) = static_cast<quaternion<_T>>(*this) + static_cast<quaternion<_T>>(q_in);
+                *this = static_cast<quaternion<_T>>(*this) + q_in ;
 
                 this->normalise();
                 return (*this);
             }
+
+            constexpr quaternionU<_T> operator*(double value){
+            
+                quaternionU<_T> q_res;
+                
+                q_res = static_cast<quaternion<_T>>(*this) * value;
+
+                q_res.normalise();
+                return q_res;
+            }
+
     };
 
 
@@ -192,6 +214,15 @@ namespace yadq{
             return hamilton_prod(q_lhv, q_rhv);
         }
     }
+
+    template<   typename T,
+                typename = std::enable_if_t<is_base_of_quaternion_v<T>>>
+    constexpr auto operator*(double lhv, T q_rhv) noexcept{
+        auto q_res = q_rhv * lhv;
+        std::cout << q_res << std::endl;
+        return q_res;
+    }
+
 
     /*
         ------------------------------ Fcn definition ------------------------------
