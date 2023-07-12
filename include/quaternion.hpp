@@ -158,16 +158,17 @@ namespace yadq{
         }
     }
 
-    template<   typename T, 
-                typename = std::enable_if_t<is_base_of_template_v<T, quaternion>>>
-    constexpr inline auto operator+(const T& q_lhv, const T& q_rhv) noexcept{
+    template<   typename T,
+                typename U, 
+                typename = std::enable_if_t<is_base_of_template_v<T, quaternion> && is_base_of_template_v<U, quaternion>>>
+    constexpr inline auto operator+(const T& q_lhv, const U& q_rhv) noexcept{
 
         T q_res(    q_lhv.w() + q_rhv.w(),
                     q_lhv.x() + q_rhv.x(),
                     q_lhv.y() + q_rhv.y(),
                     q_lhv.z() + q_rhv.z());
 
-        if constexpr (is_quaternionU_v<T>){
+        if constexpr (is_quaternionU_v<T> && is_quaternionU_v<U>){
             return normalise(q_res);
         }else{
             return q_res;
