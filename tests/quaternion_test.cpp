@@ -412,9 +412,33 @@ TEST(CrossFunctions, QuatToRotation) {
 }
 
 // TEST to add
-// TODO: exp
-// TODO: acos
-// TODO: log
+TEST(Quaternion, Exponential) {
+  
+	yadq::quaternionU<double> q(0, 0.7071068, 0, 0.7071068);
+
+    yadq::quaternionU<double> q_res = exp(q);
+
+    EXPECT_NEAR(q_res.w(), 0.433826, TOLERANCE);
+    EXPECT_NEAR(q_res.x(), 0.558386, TOLERANCE);
+    EXPECT_NEAR(q_res.y(), 0.433826, TOLERANCE);
+    EXPECT_NEAR(q_res.z(), 0.558386, TOLERANCE);
+}
+
+TEST(Quaternion, Logarithm) {
+  
+	yadq::quaternionU<double> q(0, 0.7071068, 0, 0.7071068);
+
+    auto q_res = log(q);
+    
+    EXPECT_TRUE(q_res != std::nullopt);
+
+    std::cout << q_res.value() << std::endl;
+
+    EXPECT_NEAR(q_res.value().w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(q_res.value().x(), 0.7071068, TOLERANCE);
+    EXPECT_NEAR(q_res.value().y(), 0.0, TOLERANCE);
+    EXPECT_NEAR(q_res.value().z(), 0.7071068, TOLERANCE);
+}
 
 
 TEST(DualQuaternion, Constructor) {
@@ -440,8 +464,6 @@ TEST(DualQuaternion, ConstructorRotTransl) {
     yadq::quaternionU<double> qr(0, 0.7071068, 0, 0.7071068);
 	yadq::dualquaternion<double> dq(qr, {1, 0, 0});
 
-    std::cout << dq << std::endl;
-
     EXPECT_NEAR(dq.qr_.w(), 0.0, TOLERANCE);
     EXPECT_NEAR(dq.qr_.x(), 0.7071068, TOLERANCE);
     EXPECT_NEAR(dq.qr_.y(), 0.0, TOLERANCE);
@@ -450,7 +472,8 @@ TEST(DualQuaternion, ConstructorRotTransl) {
     EXPECT_NEAR(dq.qd_.w(), -0.353553, TOLERANCE);
     EXPECT_NEAR(dq.qd_.x(), 0.0, TOLERANCE);
     EXPECT_NEAR(dq.qd_.y(), -0.353553, TOLERANCE);
-    EXPECT_NEAR(dq.qd_.z(), 0.0, TOLERANCE);}
+    EXPECT_NEAR(dq.qd_.z(), 0.0, TOLERANCE);
+}
 
 
 
