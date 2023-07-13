@@ -62,40 +62,40 @@ namespace yadq{
     }
 
     // TODO: [#1] Validate functions
-    // template<typename T>
-    // constexpr std::array<T, 3> operator*(const dualquaternion<T>& dq_lhv, const std::array<T, 3>& p_rhv){
+    template<typename T>
+    constexpr std::array<T, 3> operator*(const dualquaternion<T>& dq_lhv, const std::array<T, 3>& p_rhv){
         
-    //     std::array<T, 3> p_new;
-    //     dualquaternion<T> dq_t (quaternionU<T>(1, 0, 0, 0), p_rhv[0], p_rhv[0], p_rhv[0]);
+        std::array<T, 3> p_new;
+        dualquaternion<T> dq_t (quaternionU<T>(1, 0, 0, 0), p_rhv);
 
-    //     dualquaternion<T> dq = dq_lhv * dq_t * conjugate(dq_lhv);
+        dualquaternion<T> dq = dq_lhv * dq_t * conjugate(dq_lhv);
 
-    //     return p_new;
-    // }
+        return p_new;
+    }
 
-    // template<typename T>
-    // constexpr dualquaternion<T> operator+(dualquaternion<T> dq_lhv, const dualquaternion<T>& dq_rhv){
+    template<typename T>
+    constexpr dualquaternion<T> operator+(dualquaternion<T> dq_lhv, const dualquaternion<T>& dq_rhv){
         
-    //     dq_lhv.qr_ += dq_rhv.qr_;
-    //     dq_lhv.qd_ += dq_rhv.qd_;
+        dq_lhv.qr_ += dq_rhv.qr_;
+        dq_lhv.qd_ += dq_rhv.qd_;
 
-    //     return dq_lhv;
-    // }
+        return dq_lhv;
+    }
     
-    // template<typename T>
-    // constexpr dualquaternion<T> conjugate(dualquaternion<T> dq_lhv){
+    template<typename T>
+    constexpr dualquaternion<T> conjugate(dualquaternion<T> dq_lhv){
         
-    //     dq_lhv.qr_.conjugate();
-    //     dq_lhv.qd_.conjugate();
+        dq_lhv.qr_.conjugate();
+        dq_lhv.qd_.conjugate();
         
-    //     return dq_lhv;
-    // } 
+        return dq_lhv;
+    } 
 
-    // template<typename T>
-    // constexpr dualquaternion<T> norm(const dualquaternion<T>& dq_lhv){
+    template<typename T>
+    constexpr dualquaternion<T> norm(const dualquaternion<T>& dq_lhv){
         
-    //     return dq_lhv * conjugate(dq_lhv);
-    // } 
+        return dq_lhv * conjugate(dq_lhv);
+    } 
 }
 
 #endif

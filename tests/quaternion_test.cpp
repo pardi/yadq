@@ -440,7 +440,6 @@ TEST(Quaternion, Logarithm) {
     EXPECT_NEAR(q_res.value().z(), 0.7071068, TOLERANCE);
 }
 
-
 TEST(DualQuaternion, Constructor) {
   
     yadq::quaternionU<double> qr(0, 0.7071068, 0, 0.7071068);
@@ -475,6 +474,24 @@ TEST(DualQuaternion, ConstructorRotTransl) {
     EXPECT_NEAR(dq.qd_.z(), 0.0, TOLERANCE);
 }
 
+TEST(DualQuaternion, Conjugate) {
+  
+    yadq::quaternionU<double> qr(0, 0.7071068, 0, 0.7071068);
+    std::array<double, 3> vec = {1, 1, 1};
+	yadq::dualquaternion<double> dq(qr, vec);
+
+    yadq::dualquaternion<double> dq_res = conjugate(dq);
+
+    EXPECT_NEAR(dq_res.qr_.w(), 0.0, TOLERANCE);
+    EXPECT_NEAR(dq_res.qr_.x(), -0.7071068, TOLERANCE);
+    EXPECT_NEAR(dq_res.qr_.y(), 0.0, TOLERANCE);
+    EXPECT_NEAR(dq_res.qr_.z(), -0.7071068, TOLERANCE);
+
+    EXPECT_NEAR(dq_res.qd_.w(), -0.707107, TOLERANCE);
+    EXPECT_NEAR(dq_res.qd_.x(), -0.353553, TOLERANCE);
+    EXPECT_NEAR(dq_res.qd_.y(), -0.0, TOLERANCE);
+    EXPECT_NEAR(dq_res.qd_.z(), 0.353553, TOLERANCE);
+}
 
 
 
