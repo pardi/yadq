@@ -21,20 +21,25 @@ namespace yadq{
             using qT = quaternion<_T>;    
 
         protected:
-            _T w_;
-            _T x_;
-            _T y_;
-            _T z_;  
-        
+            std::array<_T, 4> data_;
+            _T& w_{data_[0]};
+            _T& x_{data_[1]};
+            _T& y_{data_[2]};
+            _T& z_{data_[3]};  
         public:
+            
             using value_type = _T;
         
-            quaternion(): w_(1), x_(0), y_(0), z_(0) {}
-            quaternion(_T w, _T x, _T y, _T z): w_(w), x_(x), y_(y), z_(z) {}
-            quaternion(const qT& q_in) = default;
-            constexpr qT& operator=(const qT& q_in) = default;
+            quaternion(): data_{1, 0, 0, 0} {}
+            quaternion(_T w, _T x, _T y, _T z): data_{w, x, y, z} {}
+            quaternion(const qT& q_in): data_(q_in.data_) {}
+            constexpr qT& operator=(const qT& q_in){
+                data_ = q_in.data_;
+                return (*this);
+            } 
 
             constexpr qT& operator+=(const qT& q_in) noexcept{
+    
                 w_ += q_in.w_;
                 x_ += q_in.x_;
                 y_ += q_in.y_;
@@ -103,6 +108,10 @@ namespace yadq{
 
             inline auto z() const noexcept{
                 return z_;
+            }
+
+            inline auto& data() const noexcept{
+                return data_;
             }
 
             constexpr inline void normalise() {
