@@ -3,6 +3,9 @@
 # yadq
 Yet Another Double Quaternion library. This is an efficient library for double quaternion operations written in C++17.
 
+# wiki
+TODO: The wiki will explain the several functions and how to use them
+
 # Libraries
 - Quaternion
 - DualQuaternion
