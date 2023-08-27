@@ -26,6 +26,7 @@ enable_testing()
 add_executable(
   tests
   tests/quaternion_test.cpp
+  tests/dual_quaternion_test.cpp
   )
 
 target_include_directories(tests 
