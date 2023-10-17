@@ -2,6 +2,15 @@
 #ifndef QUATERNION_HPP
 #define QUATERNION_HPP
 
+// Version
+#define QUATERNION_VERSION_MAJOR 1
+#define QUATERNION_VERSION_MINOR 0
+#define QUATERNION_VERSION_PATCH 0
+
+#define QUATERNION_VERSION_CODE (QUATERNION_VERSION_MAJOR * 10000 + \
+                                 QUATERNION_VERSION_MINOR * 100 + \
+                                 QUATERNION_VERSION_PATCH)
+
 #include <utility>
 #include <type_traits>
 #include <iostream>

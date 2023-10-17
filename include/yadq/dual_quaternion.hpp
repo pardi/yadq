@@ -1,6 +1,15 @@
 #ifndef DUAL_QUATERNION_HPP
 #define DUAL_QUATERNION_HPP
 
+// Version
+#define DUAL_QUATERNION_VERSION_MAJOR 1
+#define DUAL_QUATERNION_VERSION_MINOR 0
+#define DUAL_QUATERNION_VERSION_PATCH 0
+
+#define DUAL_QUATERNION_VERSION_CODE (DUAL_QUATERNION_VERSION_MAJOR * 10000 + \
+                                 DUAL_QUATERNION_VERSION_MINOR * 100 + \
+                                 DUAL_QUATERNION_VERSION_PATCH)
+
 #include <utility>
 #include <type_traits>
 #include <iostream>
