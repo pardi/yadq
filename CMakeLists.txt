@@ -10,13 +10,23 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 endif()
 
+# Collect files
+file(GLOB HEADER_FILES include/*.hpp)
+file(GLOB TESTS_FILES tests/*.cpp)
+
+# Create library as interface
+set(LIB_NAME "${PROJECT_NAME}lib")
+
+add_library(${LIB_NAME} INTERFACE)
+target_include_directories(${LIB_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Simple testing main
 add_executable(${PROJECT_NAME} 
 src/main.cpp)
 
-target_include_directories(${PROJECT_NAME}  PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE)
+# target_include_directories(${PROJECT_NAME}  PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LIB_NAME})
 
 # Tests
 add_subdirectory(deps/gtest)
@@ -25,16 +35,17 @@ enable_testing()
 
 add_executable(
   tests
-  tests/quaternion_test.cpp
-  tests/dual_quaternion_test.cpp
+  ${TESTS_FILES}
   )
 
-target_include_directories(tests 
-    PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
+# target_include_directories(tests 
+#     PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(tests
   GTest::gtest_main
+  ${LIB_NAME}
 )
 
 include(GoogleTest)
 gtest_discover_tests(tests)
+
