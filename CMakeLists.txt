@@ -38,9 +38,6 @@ add_executable(
   ${TESTS_FILES}
   )
 
-# target_include_directories(tests 
-#     PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR})
-
 target_link_libraries(tests
   GTest::gtest_main
   ${LIB_NAME}
