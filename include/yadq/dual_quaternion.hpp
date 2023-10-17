@@ -25,10 +25,10 @@ namespace yadq{
         static_assert(std::is_same_v<_T, float> || std::is_same_v<_T, double>, "This class only supports floating point types");
         private:
             using dqT = dualquaternion<_T>;    
-            quaternionU<_T> qr_;
-            quaternion<_T> qd_;
 
         public:
+            quaternionU<_T> qr_;
+            quaternion<_T> qd_;
 
             dualquaternion() = default;
             dualquaternion(const quaternionU<_T>& qr, const quaternion<_T>& qd){
