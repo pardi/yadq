@@ -119,7 +119,7 @@ namespace yadq{
                 return z_;
             }
 
-            inline auto& data() const noexcept{
+            inline auto& get() const noexcept{
                 return data_;
             }
 

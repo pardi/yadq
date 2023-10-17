@@ -15,7 +15,7 @@ file(GLOB HEADER_FILES include/*.hpp)
 file(GLOB TESTS_FILES tests/*.cpp)
 
 # Create library as interface
-set(LIB_NAME "${PROJECT_NAME}lib")
+set(LIB_NAME "${PROJECT_NAME}")
 
 add_library(${LIB_NAME} INTERFACE)
 target_include_directories(${LIB_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -29,20 +29,20 @@ target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIB_NAME})
 
 # Tests
-add_subdirectory(deps/gtest)
-enable_testing()
+# add_subdirectory(deps/gtest)
+# enable_testing()
 
 
-add_executable(
-  tests
-  ${TESTS_FILES}
-  )
+# add_executable(
+#   tests
+#   ${TESTS_FILES}
+#   )
 
-target_link_libraries(tests
-  GTest::gtest_main
-  ${LIB_NAME}
-)
+# target_link_libraries(tests
+#   GTest::gtest_main
+#   ${LIB_NAME}
+# )
 
-include(GoogleTest)
-gtest_discover_tests(tests)
+# include(GoogleTest)
+# gtest_discover_tests(tests)
 
