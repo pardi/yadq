@@ -10,6 +10,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 endif()
 
+# Options
+option(BUILD_TESTS "Build the project tests" OFF)
+
 # Collect files
 file(GLOB HEADER_FILES include/*.hpp)
 list(REMOVE_ITEM HEADER_FILES "include/yadq/yadq_type_traits.hpp")
@@ -28,20 +31,22 @@ src/main.cpp)
 target_compile_options(main PRIVATE -Wall -Wextra)
 target_link_libraries(main PRIVATE ${LIB_NAME})
 
-# Tests
-add_subdirectory(deps/gtest)
-enable_testing()
+if(BUILD_TESTS) 
+  # Tests
+  add_subdirectory(deps/gtest)
+  enable_testing()
 
-add_executable(
-  tests
-  ${TESTS_FILES}
+  add_executable(
+    tests
+    ${TESTS_FILES}
+    )
+
+  target_link_libraries(tests
+    GTest::gtest_main
+    ${LIB_NAME}
   )
 
-target_link_libraries(tests
-  GTest::gtest_main
-  ${LIB_NAME}
-)
-
-include(GoogleTest)
-gtest_discover_tests(tests)
+  include(GoogleTest)
+  gtest_discover_tests(tests)
+endif()
 
