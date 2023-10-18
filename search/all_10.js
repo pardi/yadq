@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['z_0',['z',['../classyadq_1_1quaternion.html#a0b726d3cbe39ef2ddf3ccb249988943e',1,'yadq::quaternion']]],
-  ['z_5f_1',['z_',['../classyadq_1_1quaternion.html#a1cc15ef058bd43a925b40ef34034da25',1,'yadq::quaternion']]]
+  ['y_0',['y',['../classyadq_1_1quaternion.html#a1171bd1dae2bf604e2ac197d4142bb92',1,'yadq::quaternion']]],
+  ['y_5f_1',['y_',['../classyadq_1_1quaternion.html#a32022529b8932455ba1d2261a081be37',1,'yadq::quaternion']]],
+  ['yadq_2',['yadq',['../namespaceyadq.html',1,'']]],
+  ['yadq_20_2d_20yet_20another_20double_20quaternion_20library_3',['YADQ - Yet Another Double Quaternion library',['../index.html',1,'']]],
+  ['yadq_5ftype_5ftraits_2ehpp_4',['yadq_type_traits.hpp',['../yadq__type__traits_8hpp.html',1,'']]]
 ];

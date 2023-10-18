@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['x_0',['x',['../classyadq_1_1quaternion.html#a0982ebffa9f0c812461a84f749c5117e',1,'yadq::quaternion']]],
-  ['x_5f_1',['x_',['../classyadq_1_1quaternion.html#a59c2b228ce0aca93dce14ac13aaa5428',1,'yadq::quaternion']]]
+  ['w_0',['w',['../classyadq_1_1quaternion.html#ae82b3b495c0aca712063029752633cdd',1,'yadq::quaternion']]],
+  ['w_5f_1',['w_',['../classyadq_1_1quaternion.html#a1affd17199dfa3ba572c95daec71b4ce',1,'yadq::quaternion']]]
 ];
