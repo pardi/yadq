@@ -1,0 +1,8 @@
+/*! \mainpage YADQ - Yet Another Double Quaternion library
+ *
+ *  This project is an INTERFACE library that provides the user with a convenient set of classes to use double quaternions.
+ *
+ * \section descr_sec Description
+ * The dual quaternions are a mathematical method to encapsulate information about rotation and translations. Other methods like homogeneuous transformation are common alternatives, however the number of parameters that must hold is higher (16 in general or 12 for rigid transformations). 
+ * Contrary, dual quaternion holds the same information with 8 parameters. This result in lower memory used and more efficient coding.
+ */
