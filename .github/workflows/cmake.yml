@@ -13,14 +13,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: alpine:latest
       
     steps:
     
     - name: Install dependencies
-      run: |
-        apk add --no-cache git cmake make g++ libc-dev doxygen
+      run: sudo apt-get install git cmake make g++ libc-dev doxygen
         
     - name: Checkout repo 
       uses: actions/checkout@v2
@@ -47,4 +44,3 @@ jobs:
         publish_dir: ./docs/html  
         allow_empty_commit: true
         force_orphan: true
-
