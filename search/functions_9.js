@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['quaternion_0',['quaternion',['../classyadq_1_1quaternion.html#a8fcbcda8a99da8868540afda7ea01da7',1,'yadq::quaternion::quaternion()'],['../classyadq_1_1quaternion.html#ae2f7dd8e974d4245005f873a24f1efc9',1,'yadq::quaternion::quaternion(_T w, _T x, _T y, _T z)'],['../classyadq_1_1quaternion.html#a9463dd799b941b4a75001787127fae50',1,'yadq::quaternion::quaternion(const qT &amp;q_in)']]],
+  ['quaternionu_1',['quaternionU',['../classyadq_1_1quaternionU.html#a646c940d57292fdc482b19535105685c',1,'yadq::quaternionU::quaternionU()'],['../classyadq_1_1quaternionU.html#a323cd3f1dc73233771b391f1298aba7e',1,'yadq::quaternionU::quaternionU(const quaternion&lt; _T &gt; &amp;q_in)'],['../classyadq_1_1quaternionU.html#a1dcca25ad92ceffd2b9e097ca12c7371',1,'yadq::quaternionU::quaternionU(_T w, _T x, _T y, _T z)'],['../classyadq_1_1quaternionU.html#a8353f7c0bc6ac32a995f7fb14508d2bc',1,'yadq::quaternionU::quaternionU(const std::array&lt; _T, 3 &gt; &amp;axis, _T angle)'],['../classyadq_1_1quaternionU.html#ad4df5d4ea641381bd967eb9782996da6',1,'yadq::quaternionU::quaternionU(const quaternionU&lt; _T &gt; &amp;q_in)']]],
+  ['quattorotation_2',['quatToRotation',['../namespaceyadq.html#a5170dffe0a029a59105672af3d201018',1,'yadq']]]
+];
