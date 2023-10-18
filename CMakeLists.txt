@@ -12,25 +12,25 @@ endif()
 
 # Collect files
 file(GLOB HEADER_FILES include/*.hpp)
+list(REMOVE_ITEM HEADER_FILES "include/yadq/yadq_type_traits.hpp")
 file(GLOB TESTS_FILES tests/*.cpp)
 
 # Create library as interface
-set(LIB_NAME "${PROJECT_NAME}_tool")
+set(LIB_NAME "${PROJECT_NAME}")
 
 add_library(${LIB_NAME} INTERFACE)
 target_include_directories(${LIB_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Simple testing main
-add_executable(${PROJECT_NAME} 
+add_executable(main 
 src/main.cpp)
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LIB_NAME})
+target_compile_options(main PRIVATE -Wall -Wextra)
+target_link_libraries(main PRIVATE ${LIB_NAME})
 
 # Tests
 add_subdirectory(deps/gtest)
 enable_testing()
-
 
 add_executable(
   tests

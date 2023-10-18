@@ -20,6 +20,10 @@
 
 namespace yadq{
 
+    /**
+    * \class dualquaternion
+    * \brief A class describing dual quaternions. Operations and data combination are automatically handled by the object itself.
+    */
     template<typename _T>
     class dualquaternion{
         static_assert(std::is_same_v<_T, float> || std::is_same_v<_T, double>, "This class only supports floating point types");
@@ -30,18 +34,33 @@ namespace yadq{
             quaternionU<_T> qr_;
             quaternion<_T> qd_;
 
+            /**
+             * \brief Empty constructor
+             */
             dualquaternion() = default;
+            /**
+             * \brief Constructor from single components
+             * \param qr unitary quaternion component for the rotation
+             * \param qd quaternion component for the translation
+             */
             dualquaternion(const quaternionU<_T>& qr, const quaternion<_T>& qd){
                 qr_ = qr;
                 qd_ = qd;
             }
-
+           /**
+             * \brief Constructor from rotation and translation
+             * \param qr unitary quaternion representing the rotation of the dual quaternion
+             * \param t vector representing the translation of the dual quaternion
+             */
             dualquaternion(const quaternionU<_T>& r, const std::array<_T, 3> t){
                 qr_ = r;
                 quaternion<_T> q_t(0, t[0], t[1], t[2]);
                 qd_ = 0.5 * q_t * r;
             }
-
+           /**
+             * \brief Rotate the dual quaternion given a rotation as input
+             * \param q_rhv rotation represented as quaternion
+             */
             template< typename T>
             constexpr dqT operator*(quaternionU<T> q_rhv) const noexcept{
                 return dqT( qr_ * q_rhv,
