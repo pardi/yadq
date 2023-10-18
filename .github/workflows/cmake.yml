@@ -34,13 +34,13 @@ jobs:
     - name: Test
       run: ctest --test-dir ${{github.workspace}}/build/ -V
 
-    - name: Generate Documentation
-      run: doxygen Doxyfile
+    # - name: Generate Documentation
+    #   run: doxygen Doxyfile
 
-    - name: Publish Documentation
-      uses: peaceiris/actions-gh-pages@d38d8b34e3c4631f1ebfec2a11dafd7761e48e98
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/html  
-        allow_empty_commit: true
-        force_orphan: true
+    # - name: Publish Documentation
+    #   uses: peaceiris/actions-gh-pages@d38d8b34e3c4631f1ebfec2a11dafd7761e48e98
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: ./docs/html  
+    #     allow_empty_commit: true
+    #     force_orphan: true
