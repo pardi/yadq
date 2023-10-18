@@ -20,7 +20,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        apk add --no-cache git cmake make g++ libc-dev
+        apk add --no-cache git cmake make g++ libc-dev doxygen
         
     - name: Checkout repo 
       uses: actions/checkout@v2
@@ -28,8 +28,6 @@ jobs:
         submodules: true
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_TESTS=ON 
 
     - name: Build
@@ -38,3 +36,13 @@ jobs:
 
     - name: Test
       run: ctest --test-dir ${{github.workspace}}/build/ -V
+
+    - name: Generate Documentation
+      run: doxygen Doxyfile
+
+    - name: Publish Documentation
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/html  
+
