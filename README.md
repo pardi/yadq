@@ -24,6 +24,5 @@ The simplest way to contribute to the repo is using the provided docker containe
 - ```cmake .. ```
 - ```make ```
 
-# Libraries
-- Quaternion
-- DualQuaternion
+# Documentation 
+Doxygen documentation available at: https://pardi.github.io/yadq/
