@@ -4,7 +4,7 @@
 Yet Another Double Quaternion library. This is an efficient library for double quaternion operations written in C++17.
 
 # wiki
-TODO: The wiki will explain the several functions and how to use them
+Doxygen documentation available at: https://pardi.github.io/yadq/
 
 # Development setup
 ## VScode + docker
@@ -23,6 +23,3 @@ The simplest way to contribute to the repo is using the provided docker containe
 - ```mkidr build && cd build```
 - ```cmake .. ```
 - ```make ```
-
-# Documentation 
-Doxygen documentation available at: https://pardi.github.io/yadq/
