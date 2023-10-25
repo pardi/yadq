@@ -32,6 +32,8 @@ namespace yadq{
         static_assert(std::is_same_v<_T, float> || std::is_same_v<_T, double>, "This class only supports floating point types");
         private:
             using qT = quaternion<_T>;    
+
+        protected:
             std::array<_T, 4> data_;
             _T& w_{data_[0]};
             _T& x_{data_[1]};
