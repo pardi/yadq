@@ -16,6 +16,9 @@ The simplest way to contribute to the repo is using the provided docker containe
 
 ## Setup
 - Clone the repo to the your defined folder.
+```
+git clone --recurse-submodules git@github.com:pardi/yadq.git
+```
 - Open the folder with VSCode
 - The IDE will detect the configurations and ask to reload the folder in the container. Say yes.
   - If this doesn't pop up automatically, you can start the process via the blue button on the lower left corner
@@ -23,3 +26,4 @@ The simplest way to contribute to the repo is using the provided docker containe
 - ```mkidr build && cd build```
 - ```cmake .. ```
 - ```make ```
+Use the option `-DBUILD_TESTS=ON`, if you want to enable the unit testing
